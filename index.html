@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Take Easy · 墨水屏阅读固件</title>
+  <meta name="description" content="Take Easy · 放轻松，你已经开始准备放松了。适用于小纸 Pico 的墨水屏固件，在浏览器中直接安装。" />
+  <link rel="icon" type="image/png" href="assets/icons/fox-32.png" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="./"><img src="assets/icons/fox-logo.png" alt="Take Easy 图标" style="height:24px;width:auto;" /><span>Take Easy</span></a>
+      <div class="nav-links">
+        <a href="#features">功能</a>
+        <a href="#install">安装</a>
+        <a href="downloads/">下载</a>
+        <a href="docs/">使用说明</a>
+        <a href="changelog/">更新日志</a>
+        <a class="btn btn-primary" href="install/">在线刷机</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container">
+      <img src="assets/icons/fox-logo.png" alt="Take Easy 狐狸图标" style="height:88px;width:auto;margin-bottom:18px;" />
+      <span class="kicker">墨水屏阅读固件 · 专为小纸 Pico 而来</span>
+      <h1>Take Easy</h1>
+      <p class="sub">放轻松，你已经开始准备放松了。</p>
+      <div class="cta">
+        <a class="btn btn-primary btn-lg" href="install/">在线刷机</a>
+        <a class="btn btn-ghost btn-lg" href="docs/">查看使用说明</a>
+      </div>
+      <p class="meta">适用型号：小纸 Pico（RDP-G01-W） · 基于 ESP32-S3 · 网页直连烧录</p>
+    </div>
+  </header>
+
+  <!-- 开源致谢 -->
+  <div class="container" style="max-width:860px;margin-top:-32px;">
+    <div class="notice info">
+      <div>
+        <b>开源致谢</b> · 本固件由 <b>Kiiko 厂长</b> 的开源项目 <b>kiikoread</b> 修改开发而来，输入法引用 <b>YanReader</b> 实现。感谢前辈们的开源精神，让小纸 Pico 的世界更热闹。
+      </div>
+    </div>
+  </div>
+
+  <!-- 特性 -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>为摸鱼设计</h2>
+        <p>总要给自己留一点时间，放轻松，摸个鱼。</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="icon">📖</div>
+          <h3>本地书库</h3>
+          <p>书籍存放在 TF 卡，不依赖账户与在线服务。离线也能随时阅读。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🖋️</div>
+          <h3>舒适排版</h3>
+          <p>字体、字号、行距与页边距可调，把有限的屏幕整理成更自然的阅读节奏。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">📡</div>
+          <h3>Wi-Fi 传书</h3>
+          <p>设备热点或已保存网络，手机和电脑都能传文件，无需拔卡。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">📊</div>
+          <h3>阅读留存</h3>
+          <p>自动记录进度与阅读时间，让中断后的每一次返回都更从容。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">⚡</div>
+          <h3>刷新策略</h3>
+          <p>普通、快刷与水波纹模式，阅读时可设置全刷间隔，或手动清理残影。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🔒</div>
+          <h3>锁屏定制</h3>
+          <p>自定义锁屏图片与模板，休眠画面也可以有自己的风格。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 安装 -->
+  <section class="section" id="install" style="background:var(--bg-soft);">
+    <div class="container">
+      <div class="section-title">
+        <h2>三步开始使用</h2>
+        <p>需要的：设备一台、FAT 格式 TF 卡一张、可传输数据的 USB 线、装有 Chrome 或 Edge 的电脑。</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="icon">1</div>
+          <h3>在线安装固件</h3>
+          <p>用 USB 连接设备，在浏览器中直接写入固件。首次安装或切换旧固件都支持。</p>
+          <p style="margin-top:10px;"><a href="install/" class="btn btn-outline">进入安装页 →</a></p>
+        </div>
+        <div class="feature">
+          <div class="icon">2</div>
+          <h3>放入书籍与字体</h3>
+          <p>把 EPUB、TXT 放进 Books/，把字体放进 Fonts/。TF 卡即插即用。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">3</div>
+          <h3>打开书，开始读</h3>
+          <p>在书库里打开一本书，调整成舒服的排版，阅读进度会自动保存。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 界面截图占位 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-title">
+        <h2>真实界面</h2>
+        <p>以下截图占位，请替换为你自己的真机截图。</p>
+      </div>
+      <div class="features">
+        <div class="feature" style="min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--text-3);">
+          在这里放入主页 / 书架截图
+        </div>
+        <div class="feature" style="min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--text-3);">
+          在这里放入阅读正文截图
+        </div>
+        <div class="feature" style="min-height:220px;display:flex;align-items:center;justify-content:center;color:var(--text-3);">
+          在这里放入设置 / 锁屏截图
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" style="background:var(--bg-soft);">
+    <div class="container" style="max-width:760px;">
+      <div class="section-title">
+        <h2>常见问题</h2>
+      </div>
+      <div class="card" style="padding:8px 24px;">
+        <details class="faq-item">
+          <summary>这个固件支持哪些设备？</summary>
+          <div class="ans">适用于小纸 Pico（ESP32-S3）墨水屏设备。</div>
+        </details>
+        <details class="faq-item">
+          <summary>如何更新固件？</summary>
+          <div class="ans">两种方式：① 网页在线刷机，选择「固件升级」模式；② 下载 Bin 文件放入 TF 卡，在设备「升级和恢复」中升级。</div>
+        </details>
+        <details class="faq-item">
+          <summary>刷写会清空我的书籍吗？</summary>
+          <div class="ans">不会。刷写针对设备闪存，不处理 TF 卡。书籍、字体等文件都保存在 TF 卡上。</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="links">
+      <a href="install/">在线刷机</a>
+      <a href="downloads/">下载</a>
+      <a href="docs/">使用说明</a>
+      <a href="changelog/">更新日志</a>
+    </div>
+    <p>© 2026 Take Easy · 放轻松，你已经开始准备放松了</p>
+    <p style="margin-top:6px;">适用型号：小纸 Pico（RDP-G01-W） · 基于 Kiiko 厂长开源固件 kiikoread 修改开发 · 输入法引用 YanReader · 非官方发布，刷机有风险，请提前备份</p>
+  </footer>
+
+</body>
+</html>

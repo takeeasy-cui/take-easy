@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>在线刷机 · Take Easy</title>
+  <meta name="description" content="Take Easy 在线刷机，在浏览器中直接写入固件，无需安装任何驱动。仅适用于小纸 Pico（RDP-G01-W）。" />
+  <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../"><span class="dot"></span><span id="brandName">固件站</span></a>
+      <div class="nav-links">
+        <a href="../">主页</a>
+        <a href="../downloads/">下载</a>
+        <a href="../docs/">使用说明</a>
+        <a href="../changelog/">更新日志</a>
+        <a class="btn btn-primary" href="./">在线刷机</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flash-wrap container">
+    <h1 style="font-size:30px;font-weight:800;margin-bottom:6px;">在线刷机</h1>
+    <p style="color:var(--text-2);margin-bottom:24px;">浏览器直连设备写入固件，无需安装任何驱动。适用于首次安装与日常升级。</p>
+
+    <!-- 设备专用提示 -->
+    <div class="notice danger">
+      <div>
+        <b>设备确认：</b>本刷机工具仅适用于 <b>小纸 Pico（RDP-G01-W）</b> 墨水屏设备。请勿对其他任何设备使用，否则可能造成不可修复的损坏。
+      </div>
+    </div>
+
+    <!-- 准备提醒 -->
+    <div class="notice info">
+      <div>
+        <b>开始前请确认：</b><br />
+        ① 使用能传输数据的 USB 数据线连接设备；② 使用桌面版 Chrome 或 Edge 打开本页；③ 重要数据已备份，刷机期间不要拔线。
+      </div>
+    </div>
+
+    <!-- 步骤条 -->
+    <div class="flash-steps">
+      <div class="step">连接设备</div>
+      <div class="step">选择固件</div>
+      <div class="step">写入完成</div>
+    </div>
+
+    <!-- 步骤一：设备连接 -->
+    <div class="card">
+      <div class="field" style="margin-bottom:0;">
+        <label>第一步 · 连接设备</label>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <button id="btnConnect" class="btn btn-primary">连接设备</button>
+          <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">尚未选择设备</span>
+        </div>
+        <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
+          点击后浏览器会弹出系统串口列表，选择墨水屏设备对应的端口即可。连接失败时，先在设备的「设置 → 升级和恢复」进入 BOOT 模式再试。
+        </p>
+      </div>
+    </div>
+
+    <!-- 步骤二：选择固件 -->
+    <div class="card" style="margin-top:16px;">
+      <div class="field">
+        <label>2. 选择固件版本</label>
+        <select id="versionSelect" class="select">
+          <option value="">正在读取固件清单…</option>
+        </select>
+        <p id="versionDesc" style="font-size:12.5px;color:var(--text-3);margin-top:6px;"></p>
+      </div>
+
+      <div class="field">
+        <label>安装方式</label>
+        <div class="radio-cards">
+          <div class="radio-card selected" data-mode="full">
+            <div class="t">完整安装</div>
+            <div class="d">首次安装或修复系统，写入全部镜像（将覆盖设备内部数据）</div>
+          </div>
+          <div class="radio-card" data-mode="update">
+            <div class="t">固件升级</div>
+            <div class="d">已在使用本固件，仅更新应用部分，保留数据</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:0;">
+        <label>将写入的文件</label>
+        <div id="fileList" class="file-list">
+          <div class="file-row"><span>正在加载…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤三：执行写入 -->
+    <div class="card" style="margin-top:16px;">
+      <div class="field" style="margin-bottom:0;">
+        <label>3. 开始刷写</label>
+        <button id="btnFlash" class="btn btn-success btn-lg btn-block" disabled>开始刷写</button>
+        <div id="progressWrap" style="display:none;">
+          <div class="progress-wrap">
+            <div class="progress-bar"><div id="progressFill" class="fill"></div></div>
+            <div class="progress-text"><span id="progressText">准备中…</span><span></span></div>
+          </div>
+        </div>
+      </div>
+      <div id="log" class="log" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- 常见问题 -->
+    <div class="card" style="margin-top:16px;">
+      <label style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">常见问题</label>
+      <details class="faq-item" style="border-bottom:none;padding-top:0;">
+        <summary>网页刷机支持哪些浏览器？</summary>
+        <div class="ans">桌面版 Chrome 或 Edge。网页刷机依赖 Web Serial API，Safari、Firefox 与手机浏览器暂不支持。</div>
+      </details>
+      <details class="faq-item">
+        <summary>刷写会清空我的书籍和文件吗？</summary>
+        <div class="ans">刷写只写入设备闪存，不处理 TF 卡。选择「完整安装」会擦除设备内部 Flash 并写入完整镜像，操作前仍建议备份重要数据。</div>
+      </details>
+      <details class="faq-item">
+        <summary>连接后找不到设备怎么办？</summary>
+        <div class="ans">确认使用可传输数据的 USB 线，关闭占用串口的其他程序；在设备「设置 → 升级和恢复 → BOOT 刷机」进入 BOOT 模式后再连接。</div>
+      </details>
+      <details class="faq-item">
+        <summary>页面停在旧画面，是不是刷写失败了？</summary>
+        <div class="ans">电子纸可能保留上一次画面。以网页进度与设备重新启动为准，必要时断电重启一次。</div>
+      </details>
+      <details class="faq-item">
+        <summary>刷机有风险吗？会失去官方保修吗？</summary>
+        <div class="ans">刷写属自主操作，存在一定风险；写入前请备份重要数据。刷入非官方固件可能影响原厂保修，请自行斟酌。TF 卡上的书籍与文件不受影响。</div>
+      </details>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="links">
+      <a href="../">主页</a>
+      <a href="../install/">在线刷机</a>
+      <a href="../downloads/">下载</a>
+      <a href="../docs/">使用说明</a>
+      <a href="../changelog/">更新日志</a>
+    </div>
+    <p id="footerText">© 2026 Take Easy · 放轻松，你已经开始准备放松了</p>
+    <p style="margin-top:6px;">适用型号：小纸 Pico（RDP-G01-W） · 基于 Kiiko 厂长开源固件 kiikoread 修改开发 · 输入法引用 YanReader · 非官方发布，刷机有风险，请提前备份</p>
+  </footer>
+
+  <script type="module" src="../assets/js/flasher.js"></script>
+</body>
+</html>

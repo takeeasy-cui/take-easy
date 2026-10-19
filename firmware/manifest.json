@@ -1,0 +1,25 @@
+{
+  "name": "Take Easy",
+  "description": "放轻松，你已经开始准备放松了。",
+  "chipFamily": "ESP32-S3",
+  "flashMode": "dio",
+  "flashFreq": "40m",
+  "flashSize": "16MB",
+  "baudrate": 115200,
+  "fullInstallErase": true,
+  "versions": [
+    {
+      "version": "0.1.0",
+      "date": "2026-10-19",
+      "notes": "首个版本",
+      "full": [
+        { "name": "bootloader.bin",       "offset": "0x0",     "url": "firmware/0.1.0/bootloader.bin" },
+        { "name": "partition-table.bin",  "offset": "0x8000",  "url": "firmware/0.1.0/partition-table.bin" },
+        { "name": "firmware.bin",         "offset": "0x10000", "url": "firmware/0.1.0/firmware.bin" }
+      ],
+      "update": [
+        { "name": "firmware.bin",         "offset": "0x10000", "url": "firmware/0.1.0/firmware.bin" }
+      ]
+    }
+  ]
+}

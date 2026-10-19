@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>使用说明 · Take Easy</title>
+  <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../"><img src="../assets/icons/fox-logo.png" alt="Take Easy 图标" style="height:24px;width:auto;" /><span>Take Easy</span></a>
+      <div class="nav-links">
+        <a href="../">主页</a>
+        <a href="../downloads/">下载</a>
+        <a href="../changelog/">更新日志</a>
+        <a class="btn btn-primary" href="../install/">在线刷机</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container doc" style="max-width:820px;padding-bottom:64px;">
+    <h1>Take Easy 使用说明</h1>
+    <p style="color:var(--text-3);font-size:13px;">适用设备：小纸 Pico（RDP-G01-W） · 写作中，请根据实际功能补充各章节</p>
+
+    <h2>开始前，说清楚这几件事</h2>
+    <div class="notice danger">
+      <div>
+        <b>设备与风险：</b>本固件仅适用于小纸 Pico（RDP-G01-W）。刷写属自主操作，存在风险；操作前请备份重要数据，刷入非官方固件可能影响原厂保修。
+      </div>
+    </div>
+    <div class="notice info">
+      <div>
+        <b>两种刷机方式选哪个？</b>第一次安装或修复系统，用<a href="../install/">网页在线刷机</a>的「完整安装」；已在使用本固件，用「固件升级」或 TF 卡升级，均保留数据。
+      </div>
+    </div>
+
+    <h2>快速上手</h2>
+    <ol>
+      <li>准备一张 <b>FAT32</b> 格式的 TF 卡，插入设备。</li>
+      <li>用 USB 数据线连接电脑，打开 <a href="../install/">在线刷机</a> 页写入固件。</li>
+      <li>把 EPUB / TXT 放入 TF 卡 <code>Books/</code> 目录，把字体放入 <code>Fonts/</code> 目录。</li>
+      <li>重启设备，在书库中打开一本书即可阅读。</li>
+    </ol>
+
+    <h2>传书方式</h2>
+    <table>
+      <tr><th>方式</th><th>步骤</th></tr>
+      <tr><td>Wi-Fi 传书</td><td>设备开启 Wi-Fi 传书 → 手机/电脑连接同一网络 → 浏览器打开设备显示的地址 → 上传文件</td></tr>
+      <tr><td>USB 传输</td><td>设备开启 USB 文件传输 → 电脑直接复制文件到 TF 卡目录</td></tr>
+      <tr><td>读卡器</td><td>取出 TF 卡，用读卡器在电脑上复制文件</td></tr>
+    </table>
+
+    <h2>固件升级</h2>
+    <h3>方式一：网页在线刷机（推荐）</h3>
+    <p>连接设备，进入<a href="../install/">在线刷机</a>页，选择「固件升级」模式，仅更新应用分区，保留已有数据。</p>
+    <h3>方式二：TF 卡升级</h3>
+    <p>在<a href="../downloads/">下载页</a>获取 <code>update.bin</code>，重命名为 <code>Pico-update.bin</code> 放入 TF 卡根目录，在设备「设置 → 升级和恢复」中执行升级。</p>
+    <div class="notice">升级包不能作为完整包刷写到地址 0，仅适用于已安装兼容版本的设备。</div>
+
+    <h2>目录结构（TF 卡）</h2>
+    <pre>TF 卡/
+├── Books/       # 书籍（EPUB、TXT）
+├── Fonts/       # 字体（TTF / OTF，建议附带许可证）
+└── LockScreens/ # 锁屏图片（可选）</pre>
+
+    <h2>按键与操作</h2>
+    <table>
+      <tr><th>操作</th><th>说明</th></tr>
+      <tr><td>轻点正文中部</td><td>打开阅读菜单</td></tr>
+      <tr><td>轻点两侧</td><td>上一页 / 下一页</td></tr>
+      <tr><td>设置 → 按键自定义</td><td>自定义按键功能</td></tr>
+    </table>
+
+    <h2>常见问题</h2>
+    <div class="card" style="padding:8px 24px;">
+      <details class="faq-item">
+        <summary>书里的字显示成方框？</summary>
+        <div class="ans">内置字体只含部分常用汉字。请放入一款完整的中文字体到 <code>Fonts/</code> 目录，并在排版菜单中切换。</div>
+      </details>
+      <details class="faq-item">
+        <summary>PDF 打不开？</summary>
+        <div class="ans">请查阅你的固件支持格式。复杂、超容量或缺少内嵌中文字体的文档可能无法打开。</div>
+      </details>
+      <details class="faq-item">
+        <summary>如何备份配置？</summary>
+        <div class="ans">在设备「设置 → 配置备份」中导出。书籍、字体等文件仍需单独保留在 TF 卡上。</div>
+      </details>
+    </div>
+
+    <h2>开源致谢与免责声明</h2>
+    <ul>
+      <li>Take Easy 由 <b>Kiiko 厂长</b>的开源项目 <b>kiikoread</b> 修改开发而来，输入法部分引用 <b>YanReader</b> 实现，感谢开源社区与前人的工作。</li>
+      <li>本固件为<b>非官方发布</b>，按“现状”提供，不附带任何明示或默示的保证；与设备厂商及上述开源项目作者均无隶属关系。</li>
+      <li>刷写、升级等操作存在风险，请提前备份；因使用本固件造成的任何损失，由使用者自行承担。</li>
+      <li>请勿将本固件用于小纸 Pico（RDP-G01-W）以外的设备。</li>
+      <li>文中提及的品牌与商标归各自权利人所有。</li>
+    </ul>
+  </div>
+
+  <footer class="footer">
+    <div class="links">
+      <a href="../install/">在线刷机</a>
+      <a href="../downloads/">下载</a>
+      <a href="../docs/">使用说明</a>
+      <a href="../changelog/">更新日志</a>
+    </div>
+    <p>© 2026 Take Easy</p>
+    <p style="margin-top:6px;">适用型号：小纸 Pico（RDP-G01-W） · 基于 Kiiko 厂长开源固件 kiikoread 修改开发 · 输入法引用 YanReader · 非官方发布</p>
+  </footer>
+
+</body>
+</html>

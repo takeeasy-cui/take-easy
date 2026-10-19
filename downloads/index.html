@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>固件下载 · Take Easy</title>
+  <meta name="description" content="Take Easy 固件下载：完整包与 TF 卡升级包，仅适用于小纸 Pico（RDP-G01-W）。" />
+  <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../"><img src="../assets/icons/fox-logo.png" alt="Take Easy 图标" style="height:24px;width:auto;" /><span>Take Easy</span></a>
+      <div class="nav-links">
+        <a href="../">主页</a>
+        <a href="../docs/">使用说明</a>
+        <a href="../changelog/">更新日志</a>
+        <a class="btn btn-primary" href="../install/">在线刷机</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-top:48px;padding-bottom:48px;">
+    <h1 style="font-size:30px;font-weight:800;margin-bottom:6px;">Take Easy 固件下载</h1>
+    <p style="color:var(--text-2);margin-bottom:28px;">仅适用于小纸 Pico（RDP-G01-W）。两种包各司其职：完整包用于首次安装，升级包用于已装机设备的日常更新。</p>
+
+    <div class="notice info">
+      下载后请核对文件 SHA-256 校验和，防止传输损坏。首次安装建议优先使用 <a href="../install/">网页在线刷机</a>，更简单。
+    </div>
+
+    <!-- ============ 完整包（首次安装） ============ -->
+    <div class="card" style="margin-top:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span style="font-weight:800;font-size:17px;">完整包 <span class="badge badge-blue">首次安装</span></span>
+          <p style="color:var(--text-2);font-size:13.5px;margin-top:4px;">含启动程序、分区表与应用的完整镜像。用于第一次安装、修复系统或从其他固件切换过来。</p>
+        </div>
+      </div>
+      <div class="dl-item" style="margin-top:14px;margin-bottom:0;">
+        <div class="meta">
+          <div class="v">v0.1.0 <span class="badge badge-green">最新</span></div>
+          <div class="d">2026-10-19 · full.bin</div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-outline" href="#">下载 full.bin</a>
+        </div>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">完整包写入会覆盖设备内部数据；TF 卡上的书籍与文件不受影响。推荐直接用<a href="../install/">在线刷机</a>的「完整安装」模式，无需手动操作。</p>
+    </div>
+
+    <!-- ============ 升级包（TF 卡升级） ============ -->
+    <div class="card" style="margin-top:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <span style="font-weight:800;font-size:17px;">升级包 <span class="badge badge-blue">TF 卡升级</span></span>
+          <p style="color:var(--text-2);font-size:13.5px;margin-top:4px;">仅更新应用部分，保留启动程序、分区表与已有数据。适合已安装本固件的设备日常升级。</p>
+        </div>
+      </div>
+      <div class="dl-item" style="margin-top:14px;">
+        <div class="meta">
+          <div class="v">v0.1.0 <span class="badge badge-green">最新</span></div>
+          <div class="d">2026-10-19 · update.bin</div>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="#">下载 update.bin</a>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">TF 卡升级步骤</label>
+        <div class="features" style="grid-template-columns:repeat(2,1fr);gap:10px;">
+          <div class="feature" style="padding:14px 16px;">
+            <h3 style="margin-bottom:4px;">1 · 下载</h3>
+            <p>下载上方的 update.bin 到电脑。</p>
+          </div>
+          <div class="feature" style="padding:14px 16px;">
+            <h3 style="margin-bottom:4px;">2 · 重命名</h3>
+            <p>文件名改为 <code style="font-family:var(--mono);background:var(--bg-soft);border:1px solid var(--border);padding:1px 6px;border-radius:5px;font-size:12.5px;">Pico-update.bin</code>（保持一致以兼容固件升级入口）。</p>
+          </div>
+          <div class="feature" style="padding:14px 16px;">
+            <h3 style="margin-bottom:4px;">3 · 放入 TF 卡</h3>
+            <p>把文件复制到 TF 卡<b>根目录</b>，插回设备。</p>
+          </div>
+          <div class="feature" style="padding:14px 16px;">
+            <h3 style="margin-bottom:4px;">4 · 设备上升级</h3>
+            <p>在「设置 → 升级和恢复」中开始升级，等待完成重启。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice danger" style="margin-bottom:0;">
+        <div>
+          <b>注意：</b>升级包是应用升级文件，<b>不能</b>作为完整包刷写到地址 0；仅适用于已安装本固件（或兼容基础版本）的设备。尚未安装的用户请先使用完整包或<a href="../install/">在线刷机</a>。
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 校验和 ============ -->
+    <div class="card" style="margin-top:16px;">
+      <label style="font-weight:700;display:block;margin-bottom:12px;">SHA-256 校验和</label>
+      <table class="table">
+        <thead>
+          <tr><th>文件</th><th>校验和（SHA-256）</th><th>大小</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>full.bin</td>
+            <td class="mono">待填写（运行 certutil -hashfile full.bin SHA256 生成）</td>
+            <td class="mono">待填写</td>
+          </tr>
+          <tr>
+            <td>update.bin</td>
+            <td class="mono">待填写</td>
+            <td class="mono">待填写</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="links">
+      <a href="../install/">在线刷机</a>
+      <a href="../downloads/">下载</a>
+      <a href="../docs/">使用说明</a>
+      <a href="../changelog/">更新日志</a>
+    </div>
+    <p>© 2026 Take Easy</p>
+    <p style="margin-top:6px;">适用型号：小纸 Pico（RDP-G01-W） · 基于 Kiiko 厂长开源固件 kiikoread 修改开发 · 输入法引用 YanReader · 非官方发布</p>
+  </footer>
+
+</body>
+</html>

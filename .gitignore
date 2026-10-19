@@ -1,0 +1,10 @@
+# 发布工具本地目录（新电脑 setup.ps1 安装）
+tools/
+
+# wrangler 本地状态
+.wrangler/
+
+# 系统杂项
+Thumbs.db
+.DS_Store
+*.log

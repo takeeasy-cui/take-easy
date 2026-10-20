@@ -1,0 +1,2 @@
+# Firmware artifacts must round-trip byte-exact through git.
+*.bin binary

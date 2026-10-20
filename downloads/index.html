@@ -35,16 +35,16 @@
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
         <div>
           <span style="font-weight:800;font-size:17px;">完整包 <span class="badge badge-blue">首次安装</span></span>
-          <p style="color:var(--text-2);font-size:13.5px;margin-top:4px;">含启动程序、分区表与应用的完整镜像。用于第一次安装、修复系统或从其他固件切换过来。</p>
+          <p style="color:var(--text-2);font-size:13.5px;margin-top:4px;">含引导程序、分区表、应用、输入法码表与启动数据的完整镜像。用于第一次安装、修复系统或从其他固件切换过来。</p>
         </div>
       </div>
       <div class="dl-item" style="margin-top:14px;margin-bottom:0;">
         <div class="meta">
-          <div class="v">v0.1.0 <span class="badge badge-green">最新</span></div>
-          <div class="d">2026-10-19 · full.bin</div>
+          <div class="v">v1.0-b19 <span class="badge badge-green">最新</span></div>
+          <div class="d">2026-10-19 · full.bin · 12.07 MB</div>
         </div>
         <div class="actions">
-          <a class="btn btn-outline" href="#">下载 full.bin</a>
+          <a class="btn btn-outline" href="firmware/1.0-b19/full.bin" download>下载 full.bin</a>
         </div>
       </div>
       <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">完整包写入会覆盖设备内部数据；TF 卡上的书籍与文件不受影响。推荐直接用<a href="../install/">在线刷机</a>的「完整安装」模式，无需手动操作。</p>
@@ -60,11 +60,11 @@
       </div>
       <div class="dl-item" style="margin-top:14px;">
         <div class="meta">
-          <div class="v">v0.1.0 <span class="badge badge-green">最新</span></div>
-          <div class="d">2026-10-19 · update.bin</div>
+          <div class="v">v1.0-b19 <span class="badge badge-green">最新</span></div>
+          <div class="d">2026-10-19 · update.bin · 3.65 MB</div>
         </div>
         <div class="actions">
-          <a class="btn btn-primary" href="#">下载 update.bin</a>
+          <a class="btn btn-primary" href="firmware/1.0-b19/update.bin" download>下载 update.bin</a>
         </div>
       </div>
 
@@ -92,7 +92,7 @@
 
       <div class="notice danger" style="margin-bottom:0;">
         <div>
-          <b>注意：</b>升级包是应用升级文件，<b>不能</b>作为完整包刷写到地址 0；仅适用于已安装本固件（或兼容基础版本）的设备。尚未安装的用户请先使用完整包或<a href="../install/">在线刷机</a>。
+          <b>注意：</b>升级包是应用升级文件，<b>不能</b>作为完整包刷写到地址 0；仅适用于已安装本固件 <b>1.0 系列</b>（含输入法码表分区）的设备。由更早版本固件升级时不会变砖，但输入法将不可用，建议直接使用完整包或<a href="../install/">在线刷机</a>的「完整安装」。尚未安装的用户请先使用完整包。
         </div>
       </div>
     </div>
@@ -107,13 +107,43 @@
         <tbody>
           <tr>
             <td>full.bin</td>
-            <td class="mono">待填写（运行 certutil -hashfile full.bin SHA256 生成）</td>
-            <td class="mono">待填写</td>
+            <td class="mono">C13D2330C4ECE955DBFF734DEE5DAD8C184290DDEF91BF46975FE29221C31DA6</td>
+            <td class="mono">12,656,640 B</td>
           </tr>
           <tr>
             <td>update.bin</td>
-            <td class="mono">待填写</td>
-            <td class="mono">待填写</td>
+            <td class="mono">DEF4FCDA5D5CC61A1490A6260C82A11D9A21E65B284B082ED06234C45D681AFF</td>
+            <td class="mono">3,827,616 B</td>
+          </tr>
+          <tr>
+            <td>bootloader.bin</td>
+            <td class="mono">523FEE3D6DCDAA86B03CD40956928443C529B69058F81A92D5BDB9528BBC7A2E</td>
+            <td class="mono">21,232 B</td>
+          </tr>
+          <tr>
+            <td>partition-table.bin</td>
+            <td class="mono">F05D7B8F48A409ABC9E6112BB10ABC72653EB63D3912CA14A4AEE65889BFFAF5</td>
+            <td class="mono">3,072 B</td>
+          </tr>
+          <tr>
+            <td>Read_Pico.bin（应用）</td>
+            <td class="mono">DEF4FCDA5D5CC61A1490A6260C82A11D9A21E65B284B082ED06234C45D681AFF</td>
+            <td class="mono">3,827,616 B</td>
+          </tr>
+          <tr>
+            <td>ime_table_pinyin.bin</td>
+            <td class="mono">6F6FCACEFCFF5DD2BDD92A527FEF89C007806A8A7D7391CC1B8D18FEEC14BB3A</td>
+            <td class="mono">3,481,419 B</td>
+          </tr>
+          <tr>
+            <td>liangfen.bin</td>
+            <td class="mono">872AA9E3B88C0AAC2286E2A8EB0D0DA8F1E8B35C622A682BC2A39FB3E6120B3C</td>
+            <td class="mono">442,698 B</td>
+          </tr>
+          <tr>
+            <td>ota_data_initial.bin</td>
+            <td class="mono">7D2C7AC4888BFD75CD5F56E8D61F69595121183AFC81556C876732FD3782C62F</td>
+            <td class="mono">8,192 B</td>
           </tr>
         </tbody>
       </table>

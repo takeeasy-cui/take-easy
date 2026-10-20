@@ -3,22 +3,26 @@
   "description": "放轻松，你已经开始准备放松了。",
   "chipFamily": "ESP32-S3",
   "flashMode": "dio",
-  "flashFreq": "40m",
+  "flashFreq": "80m",
   "flashSize": "16MB",
   "baudrate": 115200,
   "fullInstallErase": true,
   "versions": [
     {
-      "version": "0.1.0",
+      "version": "1.0-b19",
       "date": "2026-10-19",
-      "notes": "首个版本",
+      "notes": "第十九批（应用 0x3a67a0）：YanReader 输入法引擎上线（全拼 / 九宫格拼音、候选翻页、联想、用户词典）；阅读数据面板恢复底部导航栏；备忘录整卡点击与编辑器重做；天气输入框错位修复；键盘「确定」先选词再保存；保存地点后首页立即显示。注意：「固件升级」仅适用于已刷入本固件 1.0 系列（含输入法分区表）的设备；从旧版或其他固件切换，请使用「完整安装」。",
       "full": [
-        { "name": "bootloader.bin",       "offset": "0x0",     "url": "firmware/0.1.0/bootloader.bin" },
-        { "name": "partition-table.bin",  "offset": "0x8000",  "url": "firmware/0.1.0/partition-table.bin" },
-        { "name": "firmware.bin",         "offset": "0x10000", "url": "firmware/0.1.0/firmware.bin" }
+        { "name": "bootloader.bin",       "offset": "0x0",      "url": "firmware/1.0-b19/bootloader.bin",       "size": 21232,    "sha256": "523FEE3D6DCDAA86B03CD40956928443C529B69058F81A92D5BDB9528BBC7A2E" },
+        { "name": "partition-table.bin",  "offset": "0x8000",   "url": "firmware/1.0-b19/partition-table.bin",  "size": 3072,     "sha256": "F05D7B8F48A409ABC9E6112BB10ABC72653EB63D3912CA14A4AEE65889BFFAF5" },
+        { "name": "Read_Pico.bin",        "offset": "0x10000",  "url": "firmware/1.0-b19/Read_Pico.bin",        "size": 3827616,  "sha256": "DEF4FCDA5D5CC61A1490A6260C82A11D9A21E65B284B082ED06234C45D681AFF" },
+        { "name": "ime_table_pinyin.bin", "offset": "0x410000", "url": "firmware/1.0-b19/ime_table_pinyin.bin", "size": 3481419,  "sha256": "6F6FCACEFCFF5DD2BDD92A527FEF89C007806A8A7D7391CC1B8D18FEEC14BB3A" },
+        { "name": "liangfen.bin",         "offset": "0x770000", "url": "firmware/1.0-b19/liangfen.bin",         "size": 442698,   "sha256": "872AA9E3B88C0AAC2286E2A8EB0D0DA8F1E8B35C622A682BC2A39FB3E6120B3C" },
+        { "name": "ota_data_initial.bin", "offset": "0xC10000", "url": "firmware/1.0-b19/ota_data_initial.bin", "size": 8192,     "sha256": "7D2C7AC4888BFD75CD5F56E8D61F69595121183AFC81556C876732FD3782C62F" }
       ],
       "update": [
-        { "name": "firmware.bin",         "offset": "0x10000", "url": "firmware/0.1.0/firmware.bin" }
+        { "name": "Read_Pico.bin",        "offset": "0x10000",  "url": "firmware/1.0-b19/Read_Pico.bin",        "size": 3827616,  "sha256": "DEF4FCDA5D5CC61A1490A6260C82A11D9A21E65B284B082ED06234C45D681AFF" },
+        { "name": "ota_data_initial.bin", "offset": "0xC10000", "url": "firmware/1.0-b19/ota_data_initial.bin", "size": 8192,     "sha256": "7D2C7AC4888BFD75CD5F56E8D61F69595121183AFC81556C876732FD3782C62F" }
       ]
     }
   ]

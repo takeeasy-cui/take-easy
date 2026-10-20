@@ -49,15 +49,18 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1
 
 自动执行：git push（备用站 1-2 分钟自动重建）+ wrangler deploy（主力站秒级更新）。
 
-## 当前待办（按优先级）
+## 当前待办（按优先级，2026-10-20 更新）
 
-1. **【最重要】接入真实固件**：等用户提供——
-   - esptool 烧录命令（或：bootloader/分区表/应用三个烧录地址 + Flash 大小）
-   - `full.bin`（完整包）与 `update.bin`（升级包）文件
-   - 之后：填 `firmware/manifest.json` → bin 放入 `firmware/<版本>/` → 下载页真实链接 + SHA-256（`certutil -hashfile xx.bin SHA256`）
-2. **真机截图 3~5 张** → `assets/screens/` → 替换主页"真实界面"占位区块
-3. **实测**：用 RDP-G01-W 从 https://take-easy.pages.dev/install/ 网页刷机验证全链路
-4. 主页/文档中的功能描述按固件实际功能逐条校对（当前为通用占位文案）
+1. **【已完成 staging · 待发布】接入真实固件 v1.0-b19**（固件第十九批 0x3a67a0，2026-10-20 AI 完成，本地 commit 待 push）：
+   - 固件六段布局（16MB flash，dio / 80m）：bootloader@0x0 + 分区表@0x8000 + 应用@0x10000 + 拼音码表@0x410000 + 两份码表@0x770000 + otadata@0xC10000（权威来源：固件树 build/flasher_args.json + 固件账本）
+   - `firmware/1.0-b19/`：六段原件 + full.bin（12,656,640B，esptool 5.5 merge-bin 合成）+ update.bin（=应用镜像字节级拷贝，TF 卡升级时改名 Pico-update.bin；设备端 ota_update.c 三道闸已实证兼容：ESP 镜像魔数 + project_name 同源校验 + 版本固定 1.0 同版本覆盖不比较）
+   - `firmware/manifest.json`：真实条目（每文件含 sha256/size）；**修正占位数据 flashFreq 40m→80m**；移除占位版本 0.1.0
+   - 下载页/更新日志页已填真实链接、SHA-256 表、版本条目；install 页升级模式说明已注明「仅限 1.0 系列分区布局」
+   - **升级流设计**：update 数组含 ota_data_initial.bin，防「设备此前经 TF OTA 正跑 ota_1 槽→只写 app 后 otadata 仍指旧槽→升级无效」的边角案例；旧布局设备误用升级包不会变砖但输入法不可用，页面警告已加
+   - 待用户：提供 GitHub PAT（setup.ps1 / 凭证节同法注入）后 `publish.ps1 "..."` 双站发布；发布前需用户最终确认（版本号 1.0-b19 的命名可在发布前调整）
+2. **真机截图 3~5 张** → `assets/screens/` → 替换主页"真实界面"占位区块（需用户真机操作）
+3. **实测**：用 RDP-G01-W 从 https://take-easy.pages.dev/install/ 网页刷机验证全链路（发布后进行）
+4. 主页/docs 中的功能描述按固件实际功能逐条校对（changelog 已按固件账本校写，主页与 docs/ 仍为占位文案）
 
 ## 国内访问 GitHub 的经验（重要）
 
@@ -69,8 +72,11 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1
   返回 200 才可用（教训：140.82.113.3 TCP 通、主页 200，但**静默丢弃 git 请求**）
 - `api.github.com` 真实 DNS 为 20.205.243.168（可用 --resolve 直连）；**hosts 里不要把 api.github.com 指到 github.com 网页 IP**（会 301 重定向）
 - GitHub release 下载慢：走 `https://gh-proxy.com/` 前缀加速（14.8MB 的 gh CLI 约 1 分钟）
+- 本机 clone 也走 gh-proxy 前缀镜像（2026-10-20 实测可用）；clone 后 `git remote set-url origin <官方地址>` 恢复直连（push 时配 PAT）。**本机 hosts 当前无 GitHub 固定节点**（上文 140.82.114.3 的 hosts 配置已不存在，需直连时要重新固定）
 
 ## 历史教训（避免重复踩坑）
+
+- **esptool 5.5 merge-bin 语法**：`--chip esp32s3` 必须放在子命令前；偏移与文件是成对裸参（`0x0 bootloader.bin 0x8000 partition-table.bin ...`），**不支持** `@0x0 文件` 写法（@ 前缀会被当作「参数文件」展开报 FileNotFoundError）
 
 - **.ps1 中文脚本必须存为 UTF-8 with BOM**：PowerShell 5.1 读无 BOM 文件按 GBK 解析，中文注释会破坏语法
 - **189 邮箱**对海外网站验证链接拦截激进（弹"外部链接安全提示"且"继续访问"按钮可能无响应）——解法：右键邮件里的链接"复制链接地址"，新标签页手动打开
@@ -83,3 +89,5 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1
 - **仅适用小纸 Pico（RDP-G01-W）**：刷机页顶部红色警示、免责声明齐全（非官方发布、刷机有风险请备份、TF 卡数据不受影响）
 - UI 极简：白底 + 淡蓝主色（#3b82f6）、扁平、紧凑、毛玻璃弹窗——延续用户长期设计偏好
 - 更新网站后**必须双站同步**（publish.ps1 已内置），只更一个站视为未完成
+
+> AI生成

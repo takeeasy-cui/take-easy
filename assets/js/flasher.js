@@ -85,12 +85,12 @@ async function loadManifest(url) {
 function selectVersion(idx) {
   if (!manifest) return;
   selectedVersion = manifest.versions[idx];
-  els.versionDesc.textContent = selectedVersion.notes || "";
+  if (els.versionDesc) els.versionDesc.textContent = selectedVersion.notes || "";
   renderFiles();
 }
 
 function renderFiles() {
-  if (!selectedVersion) return;
+  if (!selectedVersion || !els.fileList) return;
   const files = mode === "full" ? selectedVersion.full : selectedVersion.update;
   els.fileList.innerHTML = files
     .map((f) => `
@@ -123,6 +123,8 @@ async function connect() {
     connected = true;
     els.chipInfo.textContent = `已连接: ${chipName}`;
     els.chipInfo.classList.add("ok");
+    const panel = document.getElementById("flashPanel");
+    if (panel) panel.style.display = "";
     log(`连接成功，检测到芯片: ${chipName}`, "ok");
     els.btnConnect.innerHTML = "重新选择设备";
     els.btnConnect.disabled = false;

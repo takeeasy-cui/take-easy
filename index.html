@@ -57,9 +57,9 @@
       </div>
       <div class="features">
         <div class="feature">
-          <div class="icon">📚</div>
-          <h3>本地书库</h3>
-          <p>书籍存放在 TF 卡，EPUB 与 TXT 离线可读，不依赖账户与在线服务。</p>
+          <div class="icon">👆</div>
+          <h3>操作逻辑</h3>
+          <p>左右滑动切换页面与翻页，点击选择；长按中键退出应用，右键返回上一级；短按电源键锁屏。</p>
         </div>
         <div class="feature">
           <div class="icon">🖋️</div>
@@ -105,75 +105,57 @@
     </div>
   </section>
 
-  <!-- 在线刷机（主页直刷，不跳转，2026-10-21） -->
-  <section class="section" id="flash">
+  <!-- 在线刷机（主页直刷·精简渐进式，2026-10-21） -->
+  <section class="section" id="flash" style="background:var(--bg-soft);">
     <div class="container" style="max-width:880px;">
       <div class="section-title">
         <h2>在线刷机</h2>
-        <p>就在这一页连接设备写入固件，无需跳转。需要桌面版 Chrome 或 Edge（Web Serial）。</p>
+        <p>桌面版 Chrome / Edge 浏览器直连设备写入固件，无需安装任何工具。</p>
       </div>
       <div class="notice danger">
-        <div>
-          <b>设备确认：</b>仅适用于 <b>小纸 Pico（RDP-G01-W）</b>，请勿对其他设备使用。完整安装会覆盖设备闪存（TF 卡书籍不受影响）；刷机期间请勿断开 USB 线。
-        </div>
-      </div>
-      <div class="flash-steps" style="margin-top:16px;">
-        <div class="step">连接设备</div>
-        <div class="step">选择固件</div>
-        <div class="step">写入完成</div>
+        <div>仅适用于 <b>小纸 Pico（RDP-G01-W）</b>；完整安装会覆盖设备闪存（TF 卡书籍不受影响），刷机期间请勿拔线。</div>
       </div>
       <div class="card" style="margin-top:16px;">
         <div class="field" style="margin-bottom:0;">
-          <label>1 · 连接设备</label>
+          <label>连接设备</label>
           <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-            <button id="btnConnect" class="btn btn-primary">连接设备</button>
-            <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">尚未选择设备</span>
+            <button id="btnConnect" class="btn btn-primary btn-lg">连接设备</button>
+            <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">USB 连接后点击，在弹窗选择串口</span>
           </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:12px;">
-        <div class="field">
-          <label>2 · 选择固件版本</label>
-          <select id="versionSelect" class="select">
-            <option value="">正在读取固件清单…</option>
-          </select>
-          <p id="versionDesc" style="font-size:12.5px;color:var(--text-3);margin-top:6px;"></p>
-        </div>
-        <div class="field">
-          <label>安装方式</label>
-          <div class="radio-cards">
-            <div class="radio-card selected" data-mode="full">
-              <div class="t">完整安装</div>
-              <div class="d">首次安装 / 修复系统 / 从其他固件切换，写入全部镜像</div>
+          <div id="flashPanel" style="display:none;">
+            <div class="field" style="margin-top:16px;">
+              <label>固件版本与安装方式</label>
+              <select id="versionSelect" class="select">
+                <option value="">正在读取固件清单…</option>
+              </select>
             </div>
-            <div class="radio-card" data-mode="update">
-              <div class="t">固件升级</div>
-              <div class="d">已在用本固件 1.0 系列，仅更新应用与启动数据</div>
+            <div class="field">
+              <div class="radio-cards">
+                <div class="radio-card selected" data-mode="full">
+                  <div class="t">完整安装</div>
+                  <div class="d">首次安装 / 修复系统 / 从其他固件切换</div>
+                </div>
+                <div class="radio-card" data-mode="update">
+                  <div class="t">固件升级</div>
+                  <div class="d">已在用本固件 1.0 系列，仅更新应用</div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:0;">
-          <label>将写入的文件</label>
-          <div id="fileList" class="file-list">
-            <div class="file-row"><span>正在加载…</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:12px;">
-        <div class="field" style="margin-bottom:0;">
-          <label>3 · 开始刷写</label>
-          <button id="btnFlash" class="btn btn-success btn-lg btn-block" disabled>开始刷写</button>
-          <div id="progressWrap" style="display:none;">
-            <div class="progress-wrap">
-              <div class="progress-bar"><div id="progressFill" class="fill"></div></div>
-              <div class="progress-text"><span id="progressText">准备中…</span><span></span></div>
+            <div class="field" style="margin-bottom:0;">
+              <button id="btnFlash" class="btn btn-success btn-lg btn-block" disabled>开始刷写</button>
+              <div id="progressWrap" style="display:none;">
+                <div class="progress-wrap">
+                  <div class="progress-bar"><div id="progressFill" class="fill"></div></div>
+                  <div class="progress-text"><span id="progressText">准备中…</span><span></span></div>
+                </div>
+              </div>
             </div>
+            <div id="log" class="log" style="margin-top:14px;"></div>
           </div>
         </div>
-        <div id="log" class="log" style="margin-top:16px;"></div>
       </div>
       <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
-        找不到串口、写入中断等排查说明见 <a href="install/">详细刷机指南</a>；固件也可 <a href="downloads/">下载后手动刷写</a>。
+        详细步骤、找不到串口与写入中断等排查说明，见 <a href="install/">刷机指南</a>；固件也可 <a href="downloads/">下载后手动刷写</a>。
       </p>
     </div>
   </section>

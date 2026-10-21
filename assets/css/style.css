@@ -349,7 +349,7 @@ img { max-width: 100%; display: block; }
 }
 .shot:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 .shot .pic {
-  height: 300px;
+  height: 560px;
   display: flex; align-items: center; justify-content: center;
   background: var(--bg); border: 1px solid var(--border);
   border-radius: var(--radius-sm); overflow: hidden;
@@ -361,7 +361,7 @@ img { max-width: 100%; display: block; }
 }
 @media (max-width: 768px) {
   .shots, .shots.cols4 { grid-template-columns: repeat(2, 1fr); }
-  .shot .pic { height: 220px; }
+  .shot .pic { height: 380px; }
 }
 @media (max-width: 480px) {
   .shots, .shots.cols4 { grid-template-columns: 1fr; }

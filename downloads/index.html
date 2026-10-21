@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>固件下载 · Take Easy</title>
-  <meta name="description" content="Take Easy 固件下载：完整包与 TF 卡升级包，仅适用于小纸 Pico（RDP-G01-W）。" />
+  <meta name="description" content="Take Easy 固件下载：完整包与全部镜像文件，仅适用于小纸 Pico（RDP-G01-W）。" />
   <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
   <link rel="stylesheet" href="../assets/css/style.css" />
 </head>
@@ -24,17 +24,17 @@
 
   <div class="container" style="padding-top:48px;padding-bottom:48px;">
     <h1 style="font-size:30px;font-weight:800;margin-bottom:6px;">Take Easy 固件下载</h1>
-    <p style="color:var(--text-2);margin-bottom:28px;">仅适用于小纸 Pico（RDP-G01-W）。两种包各司其职：完整包用于首次安装，升级包用于已装机设备的日常更新。</p>
+    <p style="color:var(--text-2);margin-bottom:28px;">仅适用于小纸 Pico（RDP-G01-W）。完整包用于首次安装、修复系统与切回本固件。</p>
 
     <div class="notice info">
-      下载后请核对文件 SHA-256 校验和，防止传输损坏。首次安装建议优先使用 <a href="../install/">网页在线刷机</a>，更简单。
+      下载后请核对文件 SHA-256 校验和，防止传输损坏。安装建议优先使用 <a href="../install/">网页在线刷机</a>，更简单。
     </div>
 
     <!-- ============ 完整包（首次安装） ============ -->
     <div class="card" style="margin-top:8px;">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
         <div>
-          <span style="font-weight:800;font-size:17px;">完整包 <span class="badge badge-blue">首次安装</span></span>
+          <span style="font-weight:800;font-size:17px;">完整包 <span class="badge badge-blue">完整安装</span></span>
           <p style="color:var(--text-2);font-size:13.5px;margin-top:4px;">含引导程序、分区表、应用、输入法码表与启动数据的完整镜像。用于第一次安装、修复系统或从其他固件切换过来。</p>
         </div>
       </div>
@@ -47,54 +47,7 @@
           <a class="btn btn-outline" href="firmware/v1.0/full.bin" download>下载 full.bin</a>
         </div>
       </div>
-      <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">完整包写入会覆盖设备内部数据；TF 卡上的书籍与文件不受影响。推荐直接用<a href="../install/">在线刷机</a>的「完整安装」模式，无需手动操作。</p>
-    </div>
-
-    <!-- ============ 升级包（TF 卡升级） ============ -->
-    <div class="card" style="margin-top:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <div>
-          <span style="font-weight:800;font-size:17px;">升级包 <span class="badge badge-blue">TF 卡升级</span></span>
-          <p style="color:var(--text-2);font-size:13.5px;margin-top:4px;">仅更新应用部分，保留启动程序、分区表与已有数据。适合已安装本固件的设备日常升级。</p>
-        </div>
-      </div>
-      <div class="dl-item" style="margin-top:14px;">
-        <div class="meta">
-          <div class="v">v1.0 <span class="badge badge-green">最新</span></div>
-          <div class="d">2026-10-21 · update.bin · 3.62 MB</div>
-        </div>
-        <div class="actions">
-          <a class="btn btn-primary" href="firmware/v1.0/update.bin" download>下载 update.bin</a>
-        </div>
-      </div>
-
-      <div style="margin-top:18px;">
-        <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">TF 卡升级步骤</label>
-        <div class="features" style="grid-template-columns:repeat(2,1fr);gap:10px;">
-          <div class="feature" style="padding:14px 16px;">
-            <h3 style="margin-bottom:4px;">1 · 下载</h3>
-            <p>下载上方的 update.bin 到电脑。</p>
-          </div>
-          <div class="feature" style="padding:14px 16px;">
-            <h3 style="margin-bottom:4px;">2 · 重命名</h3>
-            <p>文件名改为 <code style="font-family:var(--mono);background:var(--bg-soft);border:1px solid var(--border);padding:1px 6px;border-radius:5px;font-size:12.5px;">Pico-update.bin</code>（保持一致以兼容固件升级入口）。</p>
-          </div>
-          <div class="feature" style="padding:14px 16px;">
-            <h3 style="margin-bottom:4px;">3 · 放入 TF 卡</h3>
-            <p>把文件复制到 TF 卡<b>根目录</b>，插回设备。</p>
-          </div>
-          <div class="feature" style="padding:14px 16px;">
-            <h3 style="margin-bottom:4px;">4 · 设备上升级</h3>
-            <p>在「设置 → 升级和恢复」中开始升级，等待完成重启。</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="notice danger" style="margin-bottom:0;">
-        <div>
-          <b>注意：</b>升级包是应用升级文件，<b>不能</b>作为完整包刷写到地址 0；仅适用于已安装本固件 <b>1.0 系列</b>（含输入法码表分区）的设备。由更早版本固件升级时不会变砖，但输入法将不可用，建议直接使用完整包或<a href="../install/">在线刷机</a>的「完整安装」。尚未安装的用户请先使用完整包。
-        </div>
-      </div>
+      <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">完整包从地址 0 写入；不勾选擦除时默认保留设备设置与阅读数据，TF 卡上的书籍与文件不受影响。手动刷写需自行使用 esptool（<code style="font-family:var(--mono);">--chip esp32s3 write-flash 0x0 full.bin</code>），一般用户推荐直接<a href="../install/">在线刷机</a>。</p>
     </div>
 
     <!-- ============ 校验和 ============ -->
@@ -106,14 +59,9 @@
         </thead>
         <tbody>
           <tr>
-            <td>full.bin</td>
-            <td class="mono">C9318C8C47049CD583C86FD65E1D9FE34FC39ABD7BE1B952E7B6095BB6193BBC</td>
+            <td>full.bin（完整包）</td>
+            <td class="mono">5B3E4E495FB41E92E6B13C804219571EF003A0B293871F38B98C93D187FF2DB8</td>
             <td class="mono">12,656,640 B</td>
-          </tr>
-          <tr>
-            <td>update.bin</td>
-            <td class="mono">FF85DF7A2F514C762D919B1F3AEA5FAE4F372398FB792A9C3E5437199C2614ED</td>
-            <td class="mono">3,790,560 B</td>
           </tr>
           <tr>
             <td>bootloader.bin</td>
@@ -121,14 +69,14 @@
             <td class="mono">21,232 B</td>
           </tr>
           <tr>
-            <td>partition-table.bin</td>
+            <td>partitions.bin（分区表）</td>
             <td class="mono">F05D7B8F48A409ABC9E6112BB10ABC72653EB63D3912CA14A4AEE65889BFFAF5</td>
             <td class="mono">3,072 B</td>
           </tr>
           <tr>
-            <td>Read_Pico.bin（应用）</td>
-            <td class="mono">FF85DF7A2F514C762D919B1F3AEA5FAE4F372398FB792A9C3E5437199C2614ED</td>
-            <td class="mono">3,790,560 B</td>
+            <td>firmware.bin（应用）</td>
+            <td class="mono">BC9D3F4CA7250BFBF4AAE3D6A04389032A18DDF07F67A233094B5726A434D638</td>
+            <td class="mono">3,824,272 B</td>
           </tr>
           <tr>
             <td>ime_table_pinyin.bin</td>
@@ -142,7 +90,7 @@
           </tr>
           <tr>
             <td>ota_data_initial.bin</td>
-            <td class="mono">7D2C7AC4888BFD75CD5F56E8D61F69595121183AFC81556C876732FD3782C62F</td>
+            <td class="mono">1502958AB6B1C7E17ECFF9FCD2248F32E8A53EC51657C89694082E5F5034FD1C</td>
             <td class="mono">8,192 B</td>
           </tr>
         </tbody>

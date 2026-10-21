@@ -349,20 +349,23 @@ img { max-width: 100%; display: block; }
 }
 .shot:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 .shot .pic {
-  height: 450px;
-  display: flex; align-items: center; justify-content: center;
   background: var(--bg); border: 1px solid var(--border);
   border-radius: var(--radius-sm); overflow: hidden;
 }
-.shot .pic img { max-width: 100%; max-height: 100%; width: auto; height: auto; }
+.shot .pic img { display: block; width: 100%; height: auto; }
 .shot figcaption {
   text-align: center; margin-top: 10px;
   font-size: 13px; font-weight: 600; color: var(--text-2);
 }
 @media (max-width: 768px) {
   .shots, .shots.cols4 { grid-template-columns: repeat(2, 1fr); }
-  .shot .pic { height: 330px; }
 }
 @media (max-width: 480px) {
   .shots, .shots.cols4 { grid-template-columns: 1fr; }
+}
+/* ESP Web Tools install-button 主题适配（2026-10-21） */
+esp-web-install-button {
+  --esp-tools-button-color: var(--primary);
+  --esp-tools-button-text-color: #ffffff;
+  --esp-tools-button-border-radius: var(--radius-sm);
 }

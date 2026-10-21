@@ -7,6 +7,9 @@
   <meta name="description" content="Take Easy 在线刷机，在浏览器中直接写入固件，无需安装任何驱动。仅适用于小纸 Pico（RDP-G01-W）。" />
   <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <script src="../installer-bridge.js"></script>
+  <script src="../flasher-integrity.js" defer></script>
+  <script type="module" src="../vendor/web/install-button.js"></script>
 </head>
 <body>
 
@@ -18,14 +21,14 @@
         <a href="../downloads/">下载</a>
         <a href="../docs/">使用说明</a>
         <a href="../changelog/">更新日志</a>
-        <a class="btn btn-primary" href="./">在线刷机</a>
+        <a class="btn btn-primary" href="../#flash">在线刷机</a>
       </div>
     </div>
   </nav>
 
   <div class="flash-wrap container">
     <h1 style="font-size:30px;font-weight:800;margin-bottom:6px;">在线刷机</h1>
-    <p style="color:var(--text-2);margin-bottom:24px;">浏览器直连设备写入固件，无需安装任何驱动。适用于首次安装与日常升级。</p>
+    <p style="color:var(--text-2);margin-bottom:24px;">浏览器直连设备写入固件，无需安装任何驱动。适用于首次安装、修复系统与切回本固件。</p>
 
     <!-- 设备专用提示 -->
     <div class="notice danger">
@@ -38,86 +41,41 @@
     <div class="card">
       <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">安装前，请确认这几件事</label>
       <ul style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
-        <li style="margin-bottom:6px;"><b>写入会替换设备上现有的系统</b>：需要回到官方系统时，请先阅读官方的构建与烧录说明。</li>
-        <li style="margin-bottom:6px;"><b>「完整安装」会整片覆盖设备闪存</b>（含引导程序与分区表）；无论设备现在运行什么系统都可以直接安装，<b>TF 卡不受影响</b>。</li>
+        <li style="margin-bottom:6px;"><b>安装写入引导程序、分区表、应用与输入法码表</b>；默认保留设备设置与数据（安装弹窗里<b>不要勾选「擦除设备」</b>），<b>TF 卡不受影响</b>。</li>
         <li style="margin-bottom:6px;">设备<b>电量充足</b>，或保持 USB 供电。</li>
         <li>重要数据已备份，<b>刷机期间不要拔线</b>。</li>
       </ul>
       <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">需要：设备一台 · 可传输数据的 USB 线 · 桌面版 Chrome 或 Edge 的电脑。</p>
     </div>
 
-    <!-- 步骤条 -->
-    <div class="flash-steps" style="margin-top:20px;">
-      <div class="step">连接设备</div>
-      <div class="step">选择固件</div>
-      <div class="step">写入完成</div>
-    </div>
-
-    <!-- 步骤一：设备连接 -->
-    <div class="card">
+    <!-- 在线安装 -->
+    <div class="card" style="margin-top:16px;">
+      <div class="field">
+        <label>固件版本</label>
+        <div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;">
+          <b id="fw-version" style="font-size:15px;">读取中…</b>
+          <span id="fw-updated" style="font-size:12.5px;color:var(--text-3);"></span>
+        </div>
+      </div>
       <div class="field" style="margin-bottom:0;">
-        <label>第一步 · 连接设备</label>
-        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-          <button id="btnConnect" class="btn btn-primary">连接设备</button>
-          <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">尚未选择设备</span>
+        <label>连接设备并安装</label>
+        <esp-web-install-button id="flash-installer" hidden manifest="../firmware/manifest.json">
+          <button slot="activate" class="btn btn-primary btn-lg" type="button">连接小纸 Pico，开始刷机</button>
+        </esp-web-install-button>
+        <div id="flash-help" style="font-size:13.5px;color:var(--text-3);margin-top:8px;line-height:1.8;">
+          <strong id="flash-help-title">正在加载刷机按钮…</strong>
+          <p style="margin:6px 0 0;">请在电脑上使用 Chrome 或 Edge 打开本页；用数据线连接墨水屏后点击连接，在弹窗选择设备串口。</p>
         </div>
         <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
-          用 USB 线连接电脑，点击「连接设备」，在浏览器弹窗里选择墨水屏设备对应的串口。写入期间请保持页面打开、电脑唤醒、数据线不动。
+          点击后进入安装窗口：确认清单 → 写入（约 2–3 分钟，含进度与日志）→ 完成后设备自动重启。过程中请保持页面打开、电脑唤醒、数据线不动。
         </p>
-        <details class="faq-item" style="border-bottom:none;padding-bottom:0;">
+        <details class="faq-item" style="border-bottom:none;padding-bottom:0;margin-top:8px;">
           <summary style="font-size:13.5px;">找不到串口，或连接后无法写入？</summary>
           <div class="ans" style="font-size:13px;">
-            先唤醒设备并保持 USB 连接；退出设备的 USB 读卡模式，关闭占用串口的其他程序（串口监视器、其他浏览器标签等）。仍未解决时，在设备「设置 → 升级和恢复 → BOOT 刷机」进入 BOOT 模式，再重新连接。也可以换一根支持数据传输的 USB 线、换一个 USB 接口后重试。
+            先唤醒设备并保持 USB 连接；退出设备的 USB 读卡模式，关闭占用串口的其他程序（串口监视器、其他浏览器标签等）。仍未解决时，在设备「设置 → 升级和恢复」进入 BOOT 模式，再重新连接。也可以换一根支持数据传输的 USB 线、换一个 USB 接口后重试。
           </div>
         </details>
       </div>
-    </div>
-
-    <!-- 步骤二：选择固件 -->
-    <div class="card" style="margin-top:16px;">
-      <div class="field">
-        <label>2. 选择固件版本</label>
-        <select id="versionSelect" class="select">
-          <option value="">正在读取固件清单…</option>
-        </select>
-        <p id="versionDesc" style="font-size:12.5px;color:var(--text-3);margin-top:6px;"></p>
-      </div>
-
-      <div class="field">
-        <label>安装方式</label>
-        <div class="radio-cards">
-          <div class="radio-card selected" data-mode="full">
-            <div class="t">完整安装</div>
-            <div class="d">首次安装或修复系统，写入全部镜像（将覆盖设备内部数据）</div>
-          </div>
-          <div class="radio-card" data-mode="update">
-            <div class="t">固件升级</div>
-            <div class="d">已在使用本固件 1.0 系列（含输入法分区表），仅更新应用与启动数据，保留设置与数据</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="field" style="margin-bottom:0;">
-        <label>将写入的文件</label>
-        <div id="fileList" class="file-list">
-          <div class="file-row"><span>正在加载…</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 步骤三：执行写入 -->
-    <div class="card" style="margin-top:16px;">
-      <div class="field" style="margin-bottom:0;">
-        <label>3. 开始刷写</label>
-        <button id="btnFlash" class="btn btn-success btn-lg btn-block" disabled>开始刷写</button>
-        <div id="progressWrap" style="display:none;">
-          <div class="progress-wrap">
-            <div class="progress-bar"><div id="progressFill" class="fill"></div></div>
-            <div class="progress-text"><span id="progressText">准备中…</span><span></span></div>
-          </div>
-        </div>
-      </div>
-      <div id="log" class="log" style="margin-top:16px;"></div>
     </div>
 
     <!-- 完成后 -->
@@ -139,11 +97,11 @@
       </details>
       <details class="faq-item">
         <summary>刷写会清空我的书籍和文件吗？</summary>
-        <div class="ans">刷写只写入设备闪存，不处理 TF 卡。选择「完整安装」会擦除设备内部 Flash 并写入完整镜像，操作前仍建议备份重要数据；TF 卡上的书籍与文件不受影响。</div>
+        <div class="ans">刷写只写入设备闪存，不处理 TF 卡，书籍与文件不受影响。安装弹窗里不勾选「擦除设备」时，设备内的设置与阅读数据也保持不变；勾选擦除则清空设备内部数据（TF 卡仍不受影响）。</div>
       </details>
       <details class="faq-item">
         <summary>连接后找不到设备怎么办？</summary>
-        <div class="ans">确认使用可传输数据的 USB 线，退出 USB 读卡模式，关闭占用串口的其他程序；在设备「设置 → 升级和恢复 → BOOT 刷机」进入 BOOT 模式后再连接。</div>
+        <div class="ans">确认使用可传输数据的 USB 线，退出 USB 读卡模式，关闭占用串口的其他程序；在设备「设置 → 升级和恢复」进入 BOOT 模式后再连接。</div>
       </details>
       <details class="faq-item">
         <summary>写入中断了怎么办？</summary>
@@ -151,11 +109,7 @@
       </details>
       <details class="faq-item">
         <summary>页面停在旧画面，是不是刷写失败了？</summary>
-        <div class="ans">电子纸会保留旧画面，以网页进度条为准。若设备按键毫无反应（偶发是重启时停在烧录待命模式），<b>拔掉 USB 线重新插上</b>即可恢复正常启动；必要时长按电源键强制重启。</div>
-      </details>
-      <details class="faq-item">
-        <summary>「固件升级」和「完整安装」有什么区别？</summary>
-        <div class="ans">「完整安装」写入全部镜像，适合首次安装、修复系统或从其他固件切换；「固件升级」仅更新应用与启动数据，适合已在本固件 1.0 系列上升级，保留设置与数据。</div>
+        <div class="ans">电子纸会保留旧画面，以安装窗口的进度为准。若设备按键毫无反应（偶发是重启时停在烧录待命模式），<b>拔掉 USB 线重新插上</b>即可恢复正常启动；必要时长按电源键强制重启。</div>
       </details>
       <details class="faq-item" style="border-bottom:none;">
         <summary>刷机有风险吗？会失去官方保修吗？</summary>
@@ -178,9 +132,38 @@
     <p style="margin-top:6px;">开源仓库地址：<a href="https://github.com/takeeasy-cui/take-easy">https://github.com/takeeasy-cui/take-easy</a></p>
   </footer>
 
-  <script type="module">
-    import { initFlasher } from "../assets/js/flasher.js";
-    initFlasher("../firmware/manifest.json");
+  <script>
+    (() => {
+      const installer = document.getElementById("flash-installer");
+      const help = document.getElementById("flash-help");
+      const title = document.getElementById("flash-help-title");
+      const versionEl = document.getElementById("fw-version");
+      const updatedEl = document.getElementById("fw-updated");
+      const button = installer.querySelector("button[slot='activate']");
+      let manifest, manifestURL;
+      if (location.protocol === "file:") {
+        title.textContent = "本地预览无法刷机，请访问线上刷机页。";
+        return;
+      }
+      const showInstaller = () => { installer.hidden = false; help.hidden = true; };
+      if (!window.isSecureContext) title.textContent = "请使用 HTTPS 打开的刷机页。";
+      else if (!("serial" in navigator)) title.textContent = "当前浏览器无法连接串口，请使用电脑版 Chrome 或 Edge。";
+      else {
+        title.textContent = "正在加载刷机按钮…";
+        const timer = setTimeout(() => { if (installer.hidden) title.textContent = "刷机按钮未能加载，请刷新页面后重试。"; }, 5000);
+        customElements.whenDefined("esp-web-install-button").then(() => { clearTimeout(timer); showInstaller(); });
+      }
+      fetch("../firmware/manifest.json", {cache: "no-store"}).then(r => r.json()).then(m => {
+        manifest = m;
+        manifestURL = new URL("../firmware/manifest.json", document.baseURI).href;
+        versionEl.textContent = "V" + m.version;
+        const published = new Date(m.updated_at);
+        if (Number.isFinite(published.getTime()))
+          updatedEl.textContent = "更新于 " + new Intl.DateTimeFormat("zh-CN", {timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit"}).format(published);
+        button.textContent = "连接小纸 Pico，刷入 V" + m.version;
+        installer.prepareManifest = () => window.TakeEasyFlasher.prepare(manifest, manifestURL);
+      }).catch(() => { versionEl.textContent = "版本信息读取失败，请刷新页面重试"; });
+    })();
   </script>
 </body>
 </html>

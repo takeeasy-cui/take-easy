@@ -7,6 +7,9 @@
   <meta name="description" content="Take Easy · 放轻松，你已经开始准备放松了。适用于小纸 Pico 的墨水屏固件，在浏览器中直接安装。" />
   <link rel="icon" type="image/png" href="assets/icons/fox-32.png" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="./installer-bridge.js"></script>
+  <script src="./flasher-integrity.js" defer></script>
+  <script type="module" src="./vendor/web/install-button.js"></script>
 </head>
 <body>
 
@@ -105,7 +108,7 @@
     </div>
   </section>
 
-  <!-- 在线刷机（主页直刷·精简渐进式，2026-10-21） -->
+  <!-- 在线刷机（ESP Web Tools，2026-10-21 参照 kiikoread 刷机模式重做） -->
   <section class="section" id="flash" style="background:var(--bg-soft);">
     <div class="container" style="max-width:880px;">
       <div class="section-title">
@@ -113,48 +116,44 @@
         <p>桌面版 Chrome / Edge 浏览器直连设备写入固件，无需安装任何工具。</p>
       </div>
       <div class="notice danger">
-        <div>仅适用于 <b>小纸 Pico（RDP-G01-W）</b>；完整安装会覆盖设备闪存（TF 卡书籍不受影响），刷机期间请勿拔线。</div>
+        <div>仅适用于 <b>小纸 Pico（RDP-G01-W）</b>；刷机写入引导程序、分区表、应用与输入法码表，设备配置与 TF 卡书籍保留，期间请勿拔线。</div>
       </div>
       <div class="card" style="margin-top:16px;">
-        <div class="field" style="margin-bottom:0;">
-          <label>连接设备</label>
-          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-            <button id="btnConnect" class="btn btn-primary btn-lg">连接设备</button>
-            <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">USB 连接后点击，在弹窗选择串口</span>
+        <div class="field">
+          <label>固件版本</label>
+          <div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;">
+            <b id="fw-version" style="font-size:15px;">读取中…</b>
+            <span id="fw-updated" style="font-size:12.5px;color:var(--text-3);"></span>
           </div>
-          <div id="flashPanel" style="display:none;">
-            <div class="field" style="margin-top:16px;">
-              <label>固件版本与安装方式</label>
-              <select id="versionSelect" class="select">
-                <option value="">正在读取固件清单…</option>
-              </select>
-            </div>
-            <div class="field">
-              <div class="radio-cards">
-                <div class="radio-card selected" data-mode="full">
-                  <div class="t">完整安装</div>
-                  <div class="d">首次安装 / 修复系统 / 从其他固件切换</div>
-                </div>
-                <div class="radio-card" data-mode="update">
-                  <div class="t">固件升级</div>
-                  <div class="d">已在用本固件 1.0 系列，仅更新应用</div>
-                </div>
-              </div>
-            </div>
-            <div class="field" style="margin-bottom:0;">
-              <button id="btnFlash" class="btn btn-success btn-lg btn-block" disabled>开始刷写</button>
-              <div id="progressWrap" style="display:none;">
-                <div class="progress-wrap">
-                  <div class="progress-bar"><div id="progressFill" class="fill"></div></div>
-                  <div class="progress-text"><span id="progressText">准备中…</span><span></span></div>
-                </div>
-              </div>
-            </div>
+        </div>
+        <div class="field">
+          <label>连接设备并安装</label>
+          <esp-web-install-button id="flash-installer" hidden manifest="firmware/manifest.json">
+            <button slot="activate" class="btn btn-primary btn-lg" type="button">连接小纸 Pico，开始刷机</button>
+          </esp-web-install-button>
+          <div id="flash-help" style="font-size:13.5px;color:var(--text-3);margin-top:8px;line-height:1.8;">
+            <strong id="flash-help-title">正在加载刷机按钮…</strong>
+            <p style="margin:6px 0 0;">请在电脑上使用 Chrome 或 Edge 打开本页，用数据线连接墨水屏后点击连接。</p>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>其他方式</label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <a class="btn btn-ghost" href="downloads/">查看全部下载</a>
           </div>
         </div>
       </div>
+      <div class="card" style="margin-top:16px;padding:16px 20px;">
+        <h3 style="margin:0 0 8px;font-size:15px;">安装须知</h3>
+        <ul style="margin:0;padding-left:20px;font-size:13.5px;color:var(--text-3);line-height:1.9;">
+          <li>点击后弹窗选择小纸 Pico 的串口（Chrome / Edge 授权一次即可）。</li>
+          <li><b>保留数据：不要勾选「擦除设备」</b>，WiFi 配置与阅读记录保持不变。</li>
+          <li>写入约 2–3 分钟，进度与日志显示在安装窗口，完成前请勿拔线。</li>
+          <li>连接不上时：在墨水屏「设置 → 升级和恢复」进入 BOOT 模式后再连接。</li>
+        </ul>
+      </div>
       <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
-        刷机完成后：把 EPUB / TXT 放进 TF 卡 Books/、字体放进 Fonts/（FAT 格式 TF 卡），开一本就能读。详细步骤与排查说明见 <a href="install/">刷机指南</a>；固件也可 <a href="downloads/">下载后手动刷写</a>。
+        刷机完成后：把 EPUB / TXT 放进 TF 卡 Books/、字体放进 Fonts/（FAT 格式 TF 卡），开一本就能读。详细步骤与排查说明见 <a href="install/">刷机指南</a>。
       </p>
     </div>
   </section>
@@ -248,7 +247,7 @@
         </details>
         <details class="faq-item">
           <summary>如何更新固件？</summary>
-          <div class="ans">两种方式：① 网页在线刷机，选择「固件升级」模式；② 下载 Bin 文件放入 TF 卡，在设备「升级和恢复」中升级。</div>
+          <div class="ans">回到本页网页在线刷机重新安装即可；安装默认保留设备设置与阅读数据，TF 卡书籍不受影响。</div>
         </details>
         <details class="faq-item">
           <summary>支持哪些阅读格式？</summary>
@@ -279,9 +278,38 @@
     <p style="margin-top:6px;">开源仓库地址：<a href="https://github.com/takeeasy-cui/take-easy">https://github.com/takeeasy-cui/take-easy</a></p>
   </footer>
 
-  <script type="module">
-    import { initFlasher } from "./assets/js/flasher.js";
-    initFlasher("firmware/manifest.json");
+  <script>
+    (() => {
+      const installer = document.getElementById("flash-installer");
+      const help = document.getElementById("flash-help");
+      const title = document.getElementById("flash-help-title");
+      const versionEl = document.getElementById("fw-version");
+      const updatedEl = document.getElementById("fw-updated");
+      const button = installer.querySelector("button[slot='activate']");
+      let manifest, manifestURL;
+      if (location.protocol === "file:") {
+        title.textContent = "本地预览无法刷机，请访问线上刷机页。";
+        return;
+      }
+      const showInstaller = () => { installer.hidden = false; help.hidden = true; };
+      if (!window.isSecureContext) title.textContent = "请使用 HTTPS 打开的刷机页。";
+      else if (!("serial" in navigator)) title.textContent = "当前浏览器无法连接串口，请使用电脑版 Chrome 或 Edge。";
+      else {
+        title.textContent = "正在加载刷机按钮…";
+        const timer = setTimeout(() => { if (installer.hidden) title.textContent = "刷机按钮未能加载，请刷新页面后重试。"; }, 5000);
+        customElements.whenDefined("esp-web-install-button").then(() => { clearTimeout(timer); showInstaller(); });
+      }
+      fetch("firmware/manifest.json", {cache: "no-store"}).then(r => r.json()).then(m => {
+        manifest = m;
+        manifestURL = new URL("firmware/manifest.json", document.baseURI).href;
+        versionEl.textContent = "V" + m.version;
+        const published = new Date(m.updated_at);
+        if (Number.isFinite(published.getTime()))
+          updatedEl.textContent = "更新于 " + new Intl.DateTimeFormat("zh-CN", {timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit"}).format(published);
+        button.textContent = "连接小纸 Pico，刷入 V" + m.version;
+        installer.prepareManifest = () => window.TakeEasyFlasher.prepare(manifest, manifestURL);
+      }).catch(() => { versionEl.textContent = "版本信息读取失败，请刷新页面重试"; });
+    })();
   </script>
 </body>
 </html>

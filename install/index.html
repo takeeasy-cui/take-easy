@@ -12,7 +12,7 @@
 
   <nav class="nav">
     <div class="nav-inner">
-      <a class="nav-brand" href="../"><span class="dot"></span><span id="brandName">固件站</span></a>
+      <a class="nav-brand" href="../"><img src="../assets/icons/fox-logo.png" alt="Take Easy 图标" style="height:24px;width:auto;" /><span>Take Easy</span></a>
       <div class="nav-links">
         <a href="../">主页</a>
         <a href="../downloads/">下载</a>
@@ -34,16 +34,20 @@
       </div>
     </div>
 
-    <!-- 准备提醒 -->
-    <div class="notice info">
-      <div>
-        <b>开始前请确认：</b><br />
-        ① 使用能传输数据的 USB 数据线连接设备；② 使用桌面版 Chrome 或 Edge 打开本页；③ 重要数据已备份，刷机期间不要拔线。
-      </div>
+    <!-- 安装前确认清单 -->
+    <div class="card">
+      <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">安装前，请确认这几件事</label>
+      <ul style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
+        <li style="margin-bottom:6px;"><b>写入会替换设备上现有的系统</b>：需要回到官方系统时，请先阅读官方的构建与烧录说明。</li>
+        <li style="margin-bottom:6px;"><b>「完整安装」会整片覆盖设备闪存</b>（含引导程序与分区表）；无论设备现在运行什么系统都可以直接安装，<b>TF 卡不受影响</b>。</li>
+        <li style="margin-bottom:6px;">设备<b>电量充足</b>，或保持 USB 供电。</li>
+        <li>重要数据已备份，<b>刷机期间不要拔线</b>。</li>
+      </ul>
+      <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">需要：设备一台 · 可传输数据的 USB 线 · 桌面版 Chrome 或 Edge 的电脑。</p>
     </div>
 
     <!-- 步骤条 -->
-    <div class="flash-steps">
+    <div class="flash-steps" style="margin-top:20px;">
       <div class="step">连接设备</div>
       <div class="step">选择固件</div>
       <div class="step">写入完成</div>
@@ -58,8 +62,14 @@
           <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">尚未选择设备</span>
         </div>
         <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
-          点击后浏览器会弹出系统串口列表，选择墨水屏设备对应的端口即可。连接失败时，先在设备的「设置 → 升级和恢复」进入 BOOT 模式再试。
+          用 USB 线连接电脑，点击「连接设备」，在浏览器弹窗里选择墨水屏设备对应的串口。写入期间请保持页面打开、电脑唤醒、数据线不动。
         </p>
+        <details class="faq-item" style="border-bottom:none;padding-bottom:0;">
+          <summary style="font-size:13.5px;">找不到串口，或连接后无法写入？</summary>
+          <div class="ans" style="font-size:13px;">
+            先唤醒设备并保持 USB 连接；退出设备的 USB 读卡模式，关闭占用串口的其他程序（串口监视器、其他浏览器标签等）。仍未解决时，在设备「设置 → 升级和恢复 → BOOT 刷机」进入 BOOT 模式，再重新连接。也可以换一根支持数据传输的 USB 线、换一个 USB 接口后重试。
+          </div>
+        </details>
       </div>
     </div>
 
@@ -110,26 +120,44 @@
       <div id="log" class="log" style="margin-top:16px;"></div>
     </div>
 
+    <!-- 完成后 -->
+    <div class="card" style="margin-top:16px;">
+      <label style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">写入完成后</label>
+      <ol style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
+        <li style="margin-bottom:6px;">设备会自动重启。墨水屏断电后会保留旧画面，若屏幕没有变化，按住电源键强制关机，再开机即可。</li>
+        <li style="margin-bottom:6px;">把 <code>EPUB / TXT</code> 放进 TF 卡 <code>Books/</code> 目录，把中文字体放进 <code>Fonts/</code> 目录（内置字体只含常用汉字，缺字会显示为方框）。</li>
+        <li>打开一本书，在排版菜单里调整字体与版式，开始阅读。</li>
+      </ol>
+    </div>
+
     <!-- 常见问题 -->
     <div class="card" style="margin-top:16px;">
       <label style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">常见问题</label>
-      <details class="faq-item" style="border-bottom:none;padding-top:0;">
+      <details class="faq-item">
         <summary>网页刷机支持哪些浏览器？</summary>
         <div class="ans">桌面版 Chrome 或 Edge。网页刷机依赖 Web Serial API，Safari、Firefox 与手机浏览器暂不支持。</div>
       </details>
       <details class="faq-item">
         <summary>刷写会清空我的书籍和文件吗？</summary>
-        <div class="ans">刷写只写入设备闪存，不处理 TF 卡。选择「完整安装」会擦除设备内部 Flash 并写入完整镜像，操作前仍建议备份重要数据。</div>
+        <div class="ans">刷写只写入设备闪存，不处理 TF 卡。选择「完整安装」会擦除设备内部 Flash 并写入完整镜像，操作前仍建议备份重要数据；TF 卡上的书籍与文件不受影响。</div>
       </details>
       <details class="faq-item">
         <summary>连接后找不到设备怎么办？</summary>
-        <div class="ans">确认使用可传输数据的 USB 线，关闭占用串口的其他程序；在设备「设置 → 升级和恢复 → BOOT 刷机」进入 BOOT 模式后再连接。</div>
+        <div class="ans">确认使用可传输数据的 USB 线，退出 USB 读卡模式，关闭占用串口的其他程序；在设备「设置 → 升级和恢复 → BOOT 刷机」进入 BOOT 模式后再连接。</div>
+      </details>
+      <details class="faq-item">
+        <summary>写入中断了怎么办？</summary>
+        <div class="ans">保持供电，重新连接并再安装一次。无法连接时，按上方说明进入 BOOT 模式，再重新选择串口刷写。</div>
       </details>
       <details class="faq-item">
         <summary>页面停在旧画面，是不是刷写失败了？</summary>
         <div class="ans">电子纸可能保留上一次画面。以网页进度与设备重新启动为准，必要时断电重启一次。</div>
       </details>
       <details class="faq-item">
+        <summary>「固件升级」和「完整安装」有什么区别？</summary>
+        <div class="ans">「完整安装」写入全部镜像，适合首次安装、修复系统或从其他固件切换；「固件升级」仅更新应用与启动数据，适合已在本固件 1.0 系列上升级，保留设置与数据。</div>
+      </details>
+      <details class="faq-item" style="border-bottom:none;">
         <summary>刷机有风险吗？会失去官方保修吗？</summary>
         <div class="ans">刷写属自主操作，存在一定风险；写入前请备份重要数据。刷入非官方固件可能影响原厂保修，请自行斟酌。TF 卡上的书籍与文件不受影响。</div>
       </details>
@@ -143,9 +171,11 @@
       <a href="../downloads/">下载</a>
       <a href="../docs/">使用说明</a>
       <a href="../changelog/">更新日志</a>
+      <a href="https://github.com/takeeasy-cui/take-easy">开源仓库</a>
     </div>
-    <p id="footerText">© 2026 Take Easy · 放轻松，你已经开始准备放松了</p>
-    <p style="margin-top:6px;">适用型号：小纸 Pico（RDP-G01-W） · 基于 Kiiko 厂长开源固件 kiikoread 修改开发 · 输入法引用 YanReader · 非官方发布，刷机有风险，请提前备份</p>
+    <p>© 2026 Take Easy · 放轻松，你已经开始准备放松了</p>
+    <p style="margin-top:6px;">适用型号：小纸 Pico（RDP-G01-W） · 基于 MindReset Read Pico 官方示例固件与上游 kiikoread 修改开发 · 输入法引用 YanReader · 独立衍生版本，非官方发布，刷机有风险，请提前备份</p>
+    <p style="margin-top:6px;">开源仓库地址：<a href="https://github.com/takeeasy-cui/take-easy">https://github.com/takeeasy-cui/take-easy</a></p>
   </footer>
 
   <script type="module" src="../assets/js/flasher.js"></script>

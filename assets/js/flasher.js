@@ -1,27 +1,23 @@
 /* ============================================================
    刷机逻辑 · 基于 esptool-js (Web Serial API)
    兼容 Chrome / Edge 桌面版，需 HTTPS 环境
+
+   用法（页面内联 module 调用，2026-10-21 重构为参数化入口）：
+     import { initFlasher } from "<相对本页的 flasher.js 路径>";
+     initFlasher("<相对本页的 manifest.json 路径>");
+   固件文件 URL 以 manifest 实际地址为基准解析——主站根路径与
+   GitHub Pages 子路径部署均正确。
+
+   本次修复的两个 bug（用户 2026-10-21 反馈"读清单卡住+连接按钮无反应"）：
+   ① 事件绑定误用不存在的 els.mode（实为 modeCards），脚本在此崩溃，
+     后续按钮监听与 loadManifest 均未执行；
+   ② 固件/清单 URL 若以页面为基准解析，在 /install/ 子目录下 404。
    ============================================================ */
 import { ESPLoader, Transport } from "../vendor/esptool.js";
 
-const MANIFEST_URL = "../firmware/manifest.json";
-
-const els = {
-  version: document.getElementById("versionSelect"),
-  versionDesc: document.getElementById("versionDesc"),
-  modeCards: document.querySelectorAll(".radio-card[data-mode]"),
-  fileList: document.getElementById("fileList"),
-  chipInfo: document.getElementById("chipInfo"),
-  btnConnect: document.getElementById("btnConnect"),
-  btnFlash: document.getElementById("btnFlash"),
-  progressWrap: document.getElementById("progressWrap"),
-  progressFill: document.getElementById("progressFill"),
-  progressText: document.getElementById("progressText"),
-  log: document.getElementById("log"),
-  steps: document.querySelectorAll(".flash-steps .step"),
-};
-
+let els = null;
 let manifest = null;
+let manifestBase = "";       /* manifest 的最终 URL（fetch 后由 res.url 得到） */
 let selectedVersion = null;
 let mode = "full";
 let transport = null;
@@ -52,8 +48,9 @@ function setStep(activeIdx) {
 
 /* ---------- 工具 ---------- */
 async function fetchBinary(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`下载失败: ${url} (HTTP ${res.status})`);
+  const abs = manifestBase ? new URL(url, manifestBase).href : url;
+  const res = await fetch(abs);
+  if (!res.ok) throw new Error(`下载失败: ${abs} (HTTP ${res.status})`);
   const buf = await res.arrayBuffer();
   return new Uint8Array(buf);
 }
@@ -65,17 +62,17 @@ function fmtSize(n) {
 }
 
 /* ---------- 加载固件清单 ---------- */
-async function loadManifest() {
+async function loadManifest(url) {
   try {
-    const res = await fetch(MANIFEST_URL, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    manifestBase = res.url;
     manifest = await res.json();
   } catch (e) {
     els.version.innerHTML = '<option value="">固件清单加载失败，请刷新重试</option>';
     log(`固件清单加载失败: ${e.message}`, "err");
-    throw e;
+    return;
   }
-  document.title = `${manifest.name} · 在线刷机`;
   const versions = manifest.versions || [];
   els.version.innerHTML = versions
     .map((v, i) => `<option value="${i}">v${v.version} · ${v.date || ""}</option>`)
@@ -86,6 +83,7 @@ async function loadManifest() {
 }
 
 function selectVersion(idx) {
+  if (!manifest) return;
   selectedVersion = manifest.versions[idx];
   els.versionDesc.textContent = selectedVersion.notes || "";
   renderFiles();
@@ -165,7 +163,7 @@ async function flash() {
     await loader.writeFlash({
       fileArray,
       flashMode: manifest.flashMode || "dio",
-      flashFreq: manifest.flashFreq || "40m",
+      flashFreq: manifest.flashFreq || "80m",
       flashSize: manifest.flashSize || "16MB",
       eraseAll,
       compress: true,
@@ -195,22 +193,38 @@ async function flash() {
   }
 }
 
-/* ---------- 事件绑定 ---------- */
-document.addEventListener("DOMContentLoaded", () => {
+/* ---------- 入口（页面 DOM 就绪后由内联 module 调用） ---------- */
+export function initFlasher(manifestUrl) {
+  els = {
+    version: document.getElementById("versionSelect"),
+    versionDesc: document.getElementById("versionDesc"),
+    modeCards: document.querySelectorAll(".radio-card[data-mode]"),
+    fileList: document.getElementById("fileList"),
+    chipInfo: document.getElementById("chipInfo"),
+    btnConnect: document.getElementById("btnConnect"),
+    btnFlash: document.getElementById("btnFlash"),
+    progressWrap: document.getElementById("progressWrap"),
+    progressFill: document.getElementById("progressFill"),
+    progressText: document.getElementById("progressText"),
+    log: document.getElementById("log"),
+    steps: document.querySelectorAll(".flash-steps .step"),
+  };
   if (els.version) {
     els.version.addEventListener("change", (e) => {
       if (e.target.value !== "") selectVersion(parseInt(e.target.value, 10));
     });
   }
-  els.mode.forEach((card) => {
+  els.modeCards.forEach((card) => {
     card.addEventListener("click", () => {
-      els.mode.forEach((c) => c.classList.remove("selected"));
+      els.modeCards.forEach((c) => c.classList.remove("selected"));
       card.classList.add("selected");
       mode = card.dataset.mode;
       renderFiles();
     });
   });
-  els.btnConnect.addEventListener("click", connect);
-  els.btnFlash.addEventListener("click", flash);
-  loadManifest();
-});
+  if (els.btnConnect) els.btnConnect.addEventListener("click", connect);
+  if (els.btnFlash) els.btnFlash.addEventListener("click", flash);
+  if (els.log) log("就绪。点击「连接设备」选择串口开始。", "info");
+  setStep(0);
+  loadManifest(manifestUrl);
+}

@@ -19,7 +19,7 @@
         <a href="downloads/">下载</a>
         <a href="docs/">使用说明</a>
         <a href="changelog/">更新日志</a>
-        <a class="btn btn-primary" href="install/">在线刷机</a>
+        <a class="btn btn-primary" href="#flash">在线刷机</a>
       </div>
     </div>
   </nav>
@@ -32,7 +32,7 @@
       <h1>Take Easy</h1>
       <p class="sub">放轻松，你已经开始准备放松了。</p>
       <div class="cta">
-        <a class="btn btn-primary btn-lg" href="install/">在线刷机</a>
+        <a class="btn btn-primary btn-lg" href="#flash">在线刷机</a>
         <a class="btn btn-ghost btn-lg" href="docs/">查看使用说明</a>
       </div>
       <p class="meta">适用型号：小纸 Pico（RDP-G01-W） · 基于 ESP32-S3 · 网页直连烧录</p>
@@ -105,6 +105,79 @@
     </div>
   </section>
 
+  <!-- 在线刷机（主页直刷，不跳转，2026-10-21） -->
+  <section class="section" id="flash">
+    <div class="container" style="max-width:880px;">
+      <div class="section-title">
+        <h2>在线刷机</h2>
+        <p>就在这一页连接设备写入固件，无需跳转。需要桌面版 Chrome 或 Edge（Web Serial）。</p>
+      </div>
+      <div class="notice danger">
+        <div>
+          <b>设备确认：</b>仅适用于 <b>小纸 Pico（RDP-G01-W）</b>，请勿对其他设备使用。完整安装会覆盖设备闪存（TF 卡书籍不受影响）；刷机期间请勿断开 USB 线。
+        </div>
+      </div>
+      <div class="flash-steps" style="margin-top:16px;">
+        <div class="step">连接设备</div>
+        <div class="step">选择固件</div>
+        <div class="step">写入完成</div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="field" style="margin-bottom:0;">
+          <label>1 · 连接设备</label>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <button id="btnConnect" class="btn btn-primary">连接设备</button>
+            <span id="chipInfo" style="font-size:13.5px;color:var(--text-3);">尚未选择设备</span>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="field">
+          <label>2 · 选择固件版本</label>
+          <select id="versionSelect" class="select">
+            <option value="">正在读取固件清单…</option>
+          </select>
+          <p id="versionDesc" style="font-size:12.5px;color:var(--text-3);margin-top:6px;"></p>
+        </div>
+        <div class="field">
+          <label>安装方式</label>
+          <div class="radio-cards">
+            <div class="radio-card selected" data-mode="full">
+              <div class="t">完整安装</div>
+              <div class="d">首次安装 / 修复系统 / 从其他固件切换，写入全部镜像</div>
+            </div>
+            <div class="radio-card" data-mode="update">
+              <div class="t">固件升级</div>
+              <div class="d">已在用本固件 1.0 系列，仅更新应用与启动数据</div>
+            </div>
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>将写入的文件</label>
+          <div id="fileList" class="file-list">
+            <div class="file-row"><span>正在加载…</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="field" style="margin-bottom:0;">
+          <label>3 · 开始刷写</label>
+          <button id="btnFlash" class="btn btn-success btn-lg btn-block" disabled>开始刷写</button>
+          <div id="progressWrap" style="display:none;">
+            <div class="progress-wrap">
+              <div class="progress-bar"><div id="progressFill" class="fill"></div></div>
+              <div class="progress-text"><span id="progressText">准备中…</span><span></span></div>
+            </div>
+          </div>
+        </div>
+        <div id="log" class="log" style="margin-top:16px;"></div>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
+        找不到串口、写入中断等排查说明见 <a href="install/">详细刷机指南</a>；固件也可 <a href="downloads/">下载后手动刷写</a>。
+      </p>
+    </div>
+  </section>
+
   <!-- 安装 -->
   <section class="section" id="install" style="background:var(--bg-soft);">
     <div class="container">
@@ -117,7 +190,7 @@
           <div class="icon">1</div>
           <h3>在线安装固件</h3>
           <p>用 USB 连接设备，在浏览器中直接写入固件。首次安装或切换旧固件都支持。</p>
-          <p style="margin-top:10px;"><a href="install/" class="btn btn-outline">进入安装页 →</a></p>
+          <p style="margin-top:10px;"><a href="#flash" class="btn btn-outline">直接开始刷机 ↓</a></p>
         </div>
         <div class="feature">
           <div class="icon">2</div>
@@ -253,5 +326,9 @@
     <p style="margin-top:6px;">开源仓库地址：<a href="https://github.com/takeeasy-cui/take-easy">https://github.com/takeeasy-cui/take-easy</a></p>
   </footer>
 
+  <script type="module">
+    import { initFlasher } from "./assets/js/flasher.js";
+    initFlasher("firmware/manifest.json");
+  </script>
 </body>
 </html>

@@ -178,6 +178,9 @@
     <p style="margin-top:6px;">开源仓库地址：<a href="https://github.com/takeeasy-cui/take-easy">https://github.com/takeeasy-cui/take-easy</a></p>
   </footer>
 
-  <script type="module" src="../assets/js/flasher.js"></script>
+  <script type="module">
+    import { initFlasher } from "../assets/js/flasher.js";
+    initFlasher("../firmware/manifest.json");
+  </script>
 </body>
 </html>

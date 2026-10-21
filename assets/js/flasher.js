@@ -34,7 +34,7 @@ function log(msg, cls = "") {
   els.log.scrollTop = els.log.scrollHeight;
 }
 const terminal = {
-  clean: () => { els.log.innerHTML = ""; },
+  clean: () => { if (els && els.log) els.log.innerHTML = ""; },
   writeLine: (d) => log(d),
   write: (d) => log(d, "info"),
 };

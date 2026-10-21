@@ -188,9 +188,17 @@ async function flash() {
     });
 
     els.progressFill.style.width = "100%";
-    els.progressText.textContent = "刷写完成！设备重启中，墨水屏可能暂留旧画面，稍候或按电源键唤醒";
+    els.progressText.textContent = "刷写完成！设备重启中，墨水屏可能暂留旧画面；若按键无反应，拔插一次 USB 线即可恢复";
     log("刷写成功！正在重启设备…", "ok");
-    await loader.after("hard_reset");
+    /* ESP32-S3 USB-Serial/JTAG：after("hard_reset") 的 RTS 复位序列会把芯片留在
+       下载模式（真机两轮复现"刷完死机"）；必须用 esptool.js 内置的
+       usbJTAGSerialReset 专用序列，才能复位后正常运行固件。 */
+    try {
+      const reset = loader.resetConstructors.usbJTAGSerialReset(loader.transport);
+      await reset.reset();
+    } catch (_) {
+      await loader.after("hard_reset");
+    }
     await new Promise((r) => setTimeout(r, 500));
     await transport.disconnect();
     connected = false;

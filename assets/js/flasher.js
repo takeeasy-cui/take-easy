@@ -24,8 +24,9 @@ let transport = null;
 let loader = null;
 let connected = false;
 
-/* ---------- 日志 ---------- */
+/* ---------- 日志（仅当页面存在日志区时写入；主页精简版无日志区自动丢弃） ---------- */
 function log(msg, cls = "") {
+  if (!els || !els.log) return;
   const div = document.createElement("div");
   if (cls) div.className = cls;
   div.textContent = msg;
@@ -101,17 +102,22 @@ function renderFiles() {
     .join("");
 }
 
-/* ---------- 连接设备 ---------- */
+/* ---------- 连接设备（全程状态反馈，失败原因直接显示在按钮旁） ---------- */
 async function connect() {
   if (!navigator.serial) {
-    log("当前浏览器不支持 Web Serial，请使用桌面版 Chrome 或 Edge，并通过 HTTPS 打开本页。", "err");
+    els.chipInfo.textContent = "当前浏览器不支持，请用桌面版 Chrome / Edge 打开本页";
+    els.chipInfo.style.color = "#b91c1c";
     return;
   }
   try {
     els.btnConnect.disabled = true;
     els.btnConnect.innerHTML = '<span class="spinner"></span> 连接中…';
+    els.chipInfo.classList.remove("ok");
+    els.chipInfo.style.color = "";
+    els.chipInfo.textContent = "连接中…";
     log("请求访问串口设备…");
     const port = await navigator.serial.requestPort();
+    els.chipInfo.textContent = "正在检测芯片…";
     log("已选择串口，正在连接并检测芯片…", "info");
     transport = new Transport(port, true);
     loader = new ESPLoader({
@@ -121,7 +127,7 @@ async function connect() {
     });
     const chipName = await loader.main();
     connected = true;
-    els.chipInfo.textContent = `已连接: ${chipName}`;
+    els.chipInfo.textContent = `已连接：${chipName}`;
     els.chipInfo.classList.add("ok");
     const panel = document.getElementById("flashPanel");
     if (panel) panel.style.display = "";
@@ -133,6 +139,8 @@ async function connect() {
   } catch (e) {
     connected = false;
     log(`连接失败: ${e.message}`, "err");
+    els.chipInfo.textContent = `连接失败：${e.message}（设备已开机、线支持数据传输时重试）`;
+    els.chipInfo.style.color = "#b91c1c";
     els.btnConnect.innerHTML = "连接设备";
     els.btnConnect.disabled = false;
     try { if (transport) await transport.disconnect(); } catch (_) {}
@@ -153,12 +161,15 @@ async function flash() {
     if (eraseAll) log("将先擦除整个 Flash，再写入完整镜像。", "warn");
 
     els.progressWrap.style.display = "block";
+    els.progressText.style.color = "";
+    els.progressText.textContent = "正在下载固件…";
 
     const fileArray = [];
     for (const f of files) {
       log(`下载 ${f.name} …`);
       const data = await fetchBinary(f.url);
       fileArray.push({ data, address: parseInt(f.offset, 16) });
+      els.progressText.textContent = `已下载 ${fileArray.length}/${files.length} 个固件文件…`;
       log(`  ${f.name} ${fmtSize(data.length)} @ ${f.offset}`, "ok");
     }
 
@@ -177,7 +188,7 @@ async function flash() {
     });
 
     els.progressFill.style.width = "100%";
-    els.progressText.textContent = "刷写完成";
+    els.progressText.textContent = "刷写完成！设备重启中，墨水屏可能暂留旧画面，稍候或按电源键唤醒";
     log("刷写成功！正在重启设备…", "ok");
     await loader.after("hard_reset");
     await new Promise((r) => setTimeout(r, 500));
@@ -187,6 +198,9 @@ async function flash() {
     log("设备已断开连接。墨水屏设备可能仍显示旧画面，请等待重启或按电源键唤醒。", "info");
   } catch (e) {
     log(`刷写失败: ${e.message}`, "err");
+    els.progressWrap.style.display = "block";
+    els.progressText.textContent = `刷写失败：${e.message}，保持 USB 连接后重试`;
+    els.progressText.style.color = "#b91c1c";
     log("请保持 USB 连接，检查后重试。如反复失败，可尝试「设置 → 升级和恢复 → BOOT 模式」。", "warn");
   } finally {
     els.btnFlash.disabled = true;

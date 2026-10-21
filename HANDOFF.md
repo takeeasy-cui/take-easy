@@ -49,7 +49,7 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1
 
 自动执行：git push（备用站 1-2 分钟自动重建）+ wrangler deploy（主力站秒级更新）。
 
-## 当前待办（按优先级，2026-10-20 更新）
+## 当前待办（按优先级，2026-10-21 更新）
 
 1. **【已完成 staging · 待发布】接入真实固件 v1.0-b19**（固件第十九批 0x3a67a0，2026-10-20 AI 完成，本地 commit 待 push）：
    - 固件六段布局（16MB flash，dio / 80m）：bootloader@0x0 + 分区表@0x8000 + 应用@0x10000 + 拼音码表@0x410000 + 两份码表@0x770000 + otadata@0xC10000（权威来源：固件树 build/flasher_args.json + 固件账本）
@@ -58,9 +58,9 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1
    - 下载页/更新日志页已填真实链接、SHA-256 表、版本条目；install 页升级模式说明已注明「仅限 1.0 系列分区布局」
    - **升级流设计**：update 数组含 ota_data_initial.bin，防「设备此前经 TF OTA 正跑 ota_1 槽→只写 app 后 otadata 仍指旧槽→升级无效」的边角案例；旧布局设备误用升级包不会变砖但输入法不可用，页面警告已加
    - 待用户：提供 GitHub PAT（setup.ps1 / 凭证节同法注入）后 `publish.ps1 "..."` 双站发布；发布前需用户最终确认（版本号 1.0-b19 的命名可在发布前调整）
-2. **真机截图 3~5 张** → `assets/screens/` → 替换主页"真实界面"占位区块（需用户真机操作）
-3. **实测**：用 RDP-G01-W 从 https://take-easy.pages.dev/install/ 网页刷机验证全链路（发布后进行）
-4. 主页/docs 中的功能描述按固件实际功能逐条校对（changelog 已按固件账本校写，主页与 docs/ 仍为占位文案）
+2. **【已完成 2026-10-21】真机截图**：12 张已提取改名（E:\TeleAgent-归档\04-真机截图\png），方向修正完毕（便签/木鱼/番茄时钟/计算器 4 张竖屏应用净逆时针 90°，游戏 180°）；主页“真实界面”区块已接入 12 张（images/ 目录，本地 commit 16be458）。22d 截图功能仍保留在固件中，删除并恢复短按锁屏待用户拍板。**版权待确认：首页×2 与书架共 6 处显示版权书封。**
+3. **【已完成 2026-10-21】网站内容改造**（本地 commit c136479，未发布）：主页与说明页按固件真实功能重写；在线刷机页补安装前确认清单 / 连接与写入引导 / 错误处理 / FAQ；全站页脚加开源仓库地址（github.com/takeeasy-cui/take-easy）与规范许可致谢（参考 if-ink OS 写法：基于 MindReset Read Pico 官方示例固件与上游 kiikoread，保留各组件许可）。
+4. **实测**：用 RDP-G01-W 从 https://take-easy.pages.dev/install/ 网页刷机验证全链路（发布后进行）。
 
 ## 国内访问 GitHub 的经验（重要）
 

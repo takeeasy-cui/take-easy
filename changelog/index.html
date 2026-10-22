@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>更新日志 · Take Easy</title>
   <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
-  <link rel="stylesheet" href="../assets/css/style.css?v=1.0.1" />
+  <link rel="stylesheet" href="../assets/css/style.css?v=1.0.2" />
 </head>
 <body>
 
@@ -26,7 +26,17 @@
     <!-- 新版本发布时，在顶部插入新条目 -->
     <div class="card" style="margin-bottom:16px;border:1px solid var(--primary);">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <span style="font-weight:800;font-size:16px;">v1.0.1 <span class="badge badge-blue" style="margin-left:6px;">最新</span> <span class="badge badge-green" style="margin-left:2px;">修复版</span></span>
+        <span style="font-weight:800;font-size:16px;">v1.0.2 <span class="badge badge-blue" style="margin-left:6px;">最新</span> <span class="badge badge-green" style="margin-left:2px;">修复版</span></span>
+        <span class="mono">2026-10-22</span>
+      </div>
+      <ul style="margin-top:10px;padding-left:20px;color:var(--text-2);font-size:14px;">
+        <li>主界面切换分界线残影对症修复：分界间隙带在画面缓存中恒为白/黑，普通差分刷新不会驱动它们，部分屏体的驱动串挽会累积成黑线——现每三次切页对分界窄带做一次全像素重置，导航栏上方不再留残影（仅轻微闪烁）</li>
+        <li>WiFi 密码键盘下移贴底（694..屏底），与设备名称编辑器同标准，密码页控件区不再被键盘遮挡</li>
+      </ul>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <span style="font-weight:800;font-size:16px;">v1.0.1</span>
         <span class="mono">2026-10-22</span>
       </div>
       <ul style="margin-top:10px;padding-left:20px;color:var(--text-2);font-size:14px;">

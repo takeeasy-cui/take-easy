@@ -1,6 +1,6 @@
 {
   "name": "take-easy",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "new_install_prompt_erase": true,
   "builds": [
     {
@@ -8,37 +8,37 @@
       "improv": false,
       "parts": [
         {
-          "path": "v1.0.2/bootloader.bin",
+          "path": "v1.0.1/bootloader.bin",
           "offset": 0,
           "size": 21232,
           "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
         },
         {
-          "path": "v1.0.2/partitions.bin",
+          "path": "v1.0.1/partitions.bin",
           "offset": 32768,
           "size": 3072,
           "sha256": "f05d7b8f48a409abc9e6112bb10abc72653eb63d3912ca14a4aee65889bffaf5"
         },
         {
-          "path": "v1.0.2/firmware.bin",
+          "path": "v1.0.1/firmware.bin",
           "offset": 65536,
-          "size": 3792560,
-          "sha256": "8c9a9dc449d38d2fbfa866dc5a4c786b46b1be8e96cc3424ad85b7490a329475"
+          "size": 3792352,
+          "sha256": "af87777e396520e6a516972b1515621ebd46cf38afc073fd5544270178e80728"
         },
         {
-          "path": "v1.0.2/ime_table_pinyin.bin",
+          "path": "v1.0.1/ime_table_pinyin.bin",
           "offset": 4259840,
           "size": 3481419,
           "sha256": "6f6fcacefcff5dd2bdd92a527fef89c007806a8a7d7391cc1b8d18feec14bb3a"
         },
         {
-          "path": "v1.0.2/liangfen.bin",
+          "path": "v1.0.1/liangfen.bin",
           "offset": 7798784,
           "size": 442698,
           "sha256": "872aa9e3b88c0aac2286e2a8eb0d0da8f1e8b35c622a682bc2a39fb3e6120b3c"
         },
         {
-          "path": "v1.0.2/ota_data_initial.bin",
+          "path": "v1.0.1/ota_data_initial.bin",
           "offset": 12648448,
           "size": 8192,
           "sha256": "1502958ab6b1c7e17ecff9fcd2248f32e8a53ec51657c89694082e5f5034fd1c"
@@ -48,12 +48,12 @@
   ],
   "pico_ota": {
     "layout": "pico-ime-dual-4m-v1",
-    "base_version": "1.0.2",
+    "base_version": "1.0.1",
     "minimum_base_version": "1.0",
-    "previous_version": "1.0.1",
+    "previous_version": "1.0",
     "rollback": true,
-    "full_bin": "v1.0.2/full.bin"
+    "full_bin": "v1.0.1/full.bin"
   },
-  "updated_at": "2026-10-22T20:30:00+08:00",
-  "notes": "V1.0.2：主界面切换分界线残影对症修复（分界窄带周期全驱重置，普通刷新模式下导航栏上方不再留黑线）；WiFi 密码键盘下移贴底（与设备名称编辑一致）。数据保留：不要勾选「擦除设备」。"
+  "updated_at": "2026-10-22T12:00:00+08:00",
+  "notes": "V1.0.1（稳定性修复与两项体验优化）：全新设备/参考固件换刷后WiFi与设置存不上、字体保存无效的NVS自愈（含写探测）；主界面分界线残影修复（周期全刷覆盖间隙带+局部刷右缘漏刷）；锁屏密码在存储异常时不再误弹假密码锁死启动；大容量TF卡挂载提速（空间统计改后台执行，文件可正常使用）；目录章节标题抗锯齿优化（灰底行不再留白边）。数据保留：不要勾选「擦除设备」。"
 }

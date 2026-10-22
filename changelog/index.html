@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>更新日志 · Take Easy</title>
   <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
-  <link rel="stylesheet" href="../assets/css/style.css?v=1.0.2" />
+  <link rel="stylesheet" href="../assets/css/style.css?v=1.0.1" />
 </head>
 <body>
 
@@ -26,12 +26,14 @@
     <!-- 新版本发布时，在顶部插入新条目 -->
     <div class="card" style="margin-bottom:16px;border:1px solid var(--primary);">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
-        <span style="font-weight:800;font-size:16px;">v1.0.2 <span class="badge badge-blue" style="margin-left:6px;">最新</span> <span class="badge badge-green" style="margin-left:2px;">修复版</span></span>
+        <span style="font-weight:800;font-size:16px;">v1.0.1 <span class="badge badge-blue" style="margin-left:6px;">最新</span> <span class="badge badge-green" style="margin-left:2px;">修复版</span></span>
         <span class="mono">2026-10-22</span>
       </div>
       <ul style="margin-top:10px;padding-left:20px;color:var(--text-2);font-size:14px;">
-        <li>主界面切换分界线残影对症修复：分界间隙带在画面缓存中恒为白/黑，普通差分刷新不会驱动它们，部分屏体的驱动串挽会累积成黑线——现每三次切页对分界窄带做一次全像素重置，导航栏上方不再留残影（仅轻微闪烁）</li>
-        <li>WiFi 密码键盘下移贴底（694..屏底），与设备名称编辑器同标准，密码页控件区不再被键盘遮挡</li>
+        <li>全新设备或从参考固件换刷后，WiFi 连不上 / 存不上、设置与字体保存无效的问题修复，首次开机自动恢复</li>
+        <li>锁屏密码在存储异常时不再误弹密码界面，恢复正常使用</li>
+        <li>大容量 TF 卡挂载提速：进入文件页即可正常使用，空间统计后台完成后自动更新</li>
+        <li>目录章节标题优化：跟随当前系统字体绘制，灰底选中行不再留白边</li>
       </ul>
     </div>
     <div class="card" style="margin-bottom:16px;">
@@ -53,7 +55,7 @@
         <span class="mono">2026-10-21</span>
       </div>
       <ul style="margin-top:10px;padding-left:20px;color:var(--text-2);font-size:14px;">
-        <li>V1.0 正式版（应用 0x3a5a90）：USB 读卡模式自愈——电脑未弹出磁盘也能安全结束并再次打开，结束后导航恢复正常</li>
+        <li>USB 读卡模式自愈：电脑未弹出磁盘也能安全结束并再次打开，结束后导航恢复正常</li>
         <li>天气全面增强：连 WiFi 后首页自动更新；设置页新增「手动更新」按钮；失败时直接显示具体原因；修复中文城市名无法请求的问题；内置默认配置（心知天气 + 北京），「恢复默认源」即用</li>
         <li>移除临时截图功能，电源键短按恢复锁屏</li>
         <li>推理 / 文字 / 步步高三个小游戏入口随版提供，进入应用页即可体验</li>
@@ -65,7 +67,7 @@
         <span class="mono">2026-10-19</span>
       </div>
       <ul style="margin-top:10px;padding-left:20px;color:var(--text-2);font-size:14px;">
-        <li>首个公开版本（应用 0x3a67a0）：YanReader 输入法引擎上线——全拼 / 九宫格拼音、候选翻页、联想、用户词典学习</li>
+        <li>首个公开版本：YanReader 输入法引擎上线——全拼 / 九宫格拼音、候选翻页、联想、用户词典学习</li>
         <li>阅读数据面板恢复底部导航栏；备忘录支持整卡点击进入，编辑器全新重做</li>
         <li>天气：接入心知天气三天预报，主页天气区显示图标 / 地点 / 高低温，可配置地点与密钥</li>
         <li>键盘「确定」先选词再保存，杜绝拼音组合丢失；保存地点后首页立即显示</li>

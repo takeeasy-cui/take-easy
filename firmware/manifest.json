@@ -27,13 +27,13 @@
         },
         {
           "path": "v1.0.2/ime_partition_image.bin",
-          "offset": 5316608,
+          "offset": 5308416,
           "size": 1044810,
           "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
         },
         {
           "path": "v1.0.2/ota_data_initial.bin",
-          "offset": 11534336,
+          "offset": 11599872,
           "size": 8192,
           "sha256": "1502958ab6b1c7e17ecff9fcd2248f32e8a53ec51657c89694082e5f5034fd1c"
         }

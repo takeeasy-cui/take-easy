@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>在线刷机 · Take Easy</title>
-  <meta name="description" content="Take Easy 在线刷机，在浏览器中直接写入固件，无需安装任何驱动。仅适用于小纸 Pico（RDP-G01-W）。" />
+  <meta name="description" content="Take Easy 在线刷机，在浏览器中直接写入固件与输入法词库（随刷机内置），无需安装任何驱动。仅适用于小纸 Pico（RDP-G01-W）。" />
   <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
   <link rel="stylesheet" href="../assets/css/style.css?v=1.0.1" />
   <script src="../installer-bridge.js?v=1.0.1"></script>
-  <script src="../flasher-integrity.js?v=1.0.1" defer></script>
+  <script src="../flasher-integrity.js?v=1.0.2" defer></script>
   <script type="module" src="../vendor/web/install-button.js"></script>
 </head>
 <body>
@@ -36,56 +36,87 @@
       </div>
     </div>
 
-    <!-- 安装前确认清单 -->
-    <div class="card">
-      <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">安装前，请确认这几件事</label>
-      <ul style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
-        <li style="margin-bottom:6px;"><b>安装写入引导程序、分区表、应用与输入法码表</b>；默认保留设备设置与数据（安装弹窗里<b>不要勾选「擦除设备」</b>），<b>TF 卡不受影响</b>。</li>
-        <li style="margin-bottom:6px;">设备<b>电量充足</b>，或保持 USB 供电。</li>
-        <li>重要数据已备份，<b>刷机期间不要拔线</b>。</li>
-      </ul>
-      <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">需要：设备一台 · 可传输数据的 USB 线 · 桌面版 Chrome 或 Edge 的电脑。</p>
+    <!-- 标签栏：固件安装 / 资源导入 -->
+    <div style="display:flex;gap:10px;margin:20px 0 0;flex-wrap:wrap;" role="tablist">
+      <button type="button" class="btn btn-primary" id="tab-fw-btn" data-tab="fw" style="border-radius:999px;font-weight:700;">固件安装</button>
+      <button type="button" class="btn" id="tab-res-btn" data-tab="res" style="border-radius:999px;font-weight:500;">资源导入</button>
     </div>
 
-    <!-- 在线安装 -->
-    <div class="card" style="margin-top:16px;">
-      <div class="field">
-        <label>固件版本</label>
-        <div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;">
-          <b id="fw-version" style="font-size:15px;">读取中…</b>
-          <span id="fw-updated" style="font-size:12.5px;color:var(--text-3);"></span>
-        </div>
+    <!-- ============ 标签一：固件安装 ============ -->
+    <section id="tab-fw">
+      <div class="card" style="margin-top:16px;">
+        <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">安装前，请确认这几件事</label>
+        <ul style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
+          <li style="margin-bottom:6px;"><b>安装写入引导程序、分区表、应用与输入法词库</b>；默认保留设备设置与数据（安装弹窗里<b>不要勾选「擦除设备」</b>），<b>TF 卡不受影响</b>。</li>
+          <li style="margin-bottom:6px;"><b>V1.0.2 更新了分区布局</b>：从旧版本重新刷机后，机内书区会重建一次（机内存放的书需重新传入）；TF 卡书籍与设置不受影响。输入法词库（精简版）随刷机内置，中文输入开箱即用。</li>
+          <li style="margin-bottom:6px;">设备<b>电量充足</b>，或保持 USB 供电。</li>
+          <li>重要数据已备份，<b>刷机期间不要拔线</b>。</li>
+        </ul>
+        <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">需要：设备一台 · 可传输数据的 USB 线 · 桌面版 Chrome 或 Edge 的电脑。</p>
       </div>
-      <div class="field" style="margin-bottom:0;">
-        <label>连接设备并安装</label>
-        <esp-web-install-button id="flash-installer" hidden manifest="../firmware/manifest.json">
-          <button slot="activate" class="btn btn-primary btn-lg" type="button">连接小纸 Pico，开始刷机</button>
-        </esp-web-install-button>
-        <div id="flash-help" style="font-size:13.5px;color:var(--text-3);margin-top:8px;line-height:1.8;">
-          <strong id="flash-help-title">正在加载刷机按钮…</strong>
-          <p style="margin:6px 0 0;">请在电脑上使用 Chrome 或 Edge 打开本页；用数据线连接墨水屏后点击连接，在弹窗选择设备串口。</p>
-        </div>
-        <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
-          点击后进入安装窗口：确认清单 → 写入（约 2–3 分钟，含进度与日志）→ 完成后设备自动重启。过程中请保持页面打开、电脑唤醒、数据线不动。
-        </p>
-        <details class="faq-item" style="border-bottom:none;padding-bottom:0;margin-top:8px;">
-          <summary style="font-size:13.5px;">找不到串口，或连接后无法写入？</summary>
-          <div class="ans" style="font-size:13px;">
-            先唤醒设备并保持 USB 连接；退出设备的 USB 读卡模式，关闭占用串口的其他程序（串口监视器、其他浏览器标签等）。仍未解决时，在设备「设置 → 升级和恢复」进入 BOOT 模式，再重新连接。也可以换一根支持数据传输的 USB 线、换一个 USB 接口后重试。
+
+      <!-- 在线安装 -->
+      <div class="card" style="margin-top:16px;">
+        <div class="field">
+          <label>固件版本</label>
+          <div style="display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;">
+            <b id="fw-version" style="font-size:15px;">读取中…</b>
+            <span id="fw-updated" style="font-size:12.5px;color:var(--text-3);"></span>
           </div>
-        </details>
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>连接设备并安装</label>
+          <esp-web-install-button id="flash-installer" hidden manifest="../firmware/manifest.json">
+            <button slot="activate" class="btn btn-primary btn-lg" type="button">连接小纸 Pico，开始刷机</button>
+          </esp-web-install-button>
+          <div id="flash-help" style="font-size:13.5px;color:var(--text-3);margin-top:8px;line-height:1.8;">
+            <strong id="flash-help-title">正在加载刷机按钮…</strong>
+            <p style="margin:6px 0 0;">请在电脑上使用 Chrome 或 Edge 打开本页；用数据线连接墨水屏后点击连接，在弹窗选择设备串口。</p>
+          </div>
+          <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
+            点击后进入安装窗口：确认清单 → 写入（约 1–2 分钟，含进度与日志）→ 完成后设备自动重启。过程中请保持页面打开、电脑唤醒、数据线不动。
+          </p>
+          <details class="faq-item" style="border-bottom:none;padding-bottom:0;margin-top:8px;">
+            <summary style="font-size:13.5px;">找不到串口，或连接后无法写入？</summary>
+            <div class="ans" style="font-size:13px;">
+              先唤醒设备并保持 USB 连接；退出设备的 USB 读卡模式，关闭占用串口的其他程序（串口监视器、其他浏览器标签等）。仍未解决时，在设备「设置 → 升级和恢复」进入 BOOT 模式，再重新连接。也可以换一根支持数据传输的 USB 线、换一个 USB 接口后重试。
+            </div>
+          </details>
+        </div>
       </div>
-    </div>
 
-    <!-- 完成后 -->
-    <div class="card" style="margin-top:16px;">
-      <label style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">写入完成后</label>
-      <ol style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
-        <li style="margin-bottom:6px;">设备会自动重启。墨水屏断电后会保留旧画面，若屏幕没有变化，按住电源键强制关机，再开机即可。</li>
-        <li style="margin-bottom:6px;">把 <code>EPUB / TXT</code> 放进 TF 卡 <code>Books/</code> 目录，把中文字体放进 <code>Fonts/</code> 目录（内置字体只含常用汉字，缺字会显示为方框）。</li>
-        <li>打开一本书，在排版菜单里调整字体与版式，开始阅读。</li>
-      </ol>
-    </div>
+      <!-- 完成后 -->
+      <div class="card" style="margin-top:16px;">
+        <label style="font-weight:700;font-size:14px;display:block;margin-bottom:8px;">写入完成后</label>
+        <ol style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
+          <li style="margin-bottom:6px;">设备会自动重启。墨水屏断电后会保留旧画面，若屏幕没有变化，按住电源键强制关机，再开机即可。</li>
+          <li style="margin-bottom:6px;">把 <code>EPUB / TXT</code> 放进 TF 卡 <code>Books/</code> 目录，把中文字体放进 <code>Fonts/</code> 目录（内置字体只含常用汉字，缺字会显示为方框）。</li>
+          <li>从旧版本升级且书传在机内（非 TF 卡）的话，机内书区已重建，需重新传书；TF 卡书不受影响。</li>
+          <li>打开一本书，在排版菜单里调整字体与版式，开始阅读。</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ 标签二：资源导入 ============ -->
+    <section id="tab-res" hidden>
+      <div class="card" style="margin-top:16px;">
+        <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">关于资源导入</label>
+        <ul style="padding-left:20px;color:var(--text-2);font-size:13.5px;margin:0;">
+          <li style="margin-bottom:6px;">输入法词库已随刷机内置（V1.0.2），无需再导入资源。</li>
+          <li style="margin-bottom:6px;">游戏资源包（逆转裁判、伏魔记等）接入后，本页提供一键写入；资源导入只写入指定分区，不改动固件与书籍数据。</li>
+          <li>连接方式与刷机相同：桌面版 Chrome 或 Edge + 数据线。</li>
+        </ul>
+      </div>
+
+      <!-- ① 游戏资源（预留） -->
+      <div class="card" style="margin-top:16px;opacity:0.72;">
+        <label style="font-weight:700;font-size:14px;display:block;margin-bottom:10px;">① 游戏资源 <span style="font-weight:400;font-size:12.5px;color:var(--text-3);">即将推出</span></label>
+        <p style="font-size:13.5px;color:var(--text-2);margin:0;line-height:1.8;">
+          逆转裁判、伏魔记等游戏资源包将陆续接入本页导入，敬请期待。已在设备上预留安装接口，无需再次刷机。
+        </p>
+        <button class="btn btn-lg" type="button" disabled style="margin-top:14px;cursor:not-allowed;opacity:0.6;">暂未开放</button>
+      </div>
+    </section>
 
     <!-- 常见问题 -->
     <div class="card" style="margin-top:16px;">
@@ -96,7 +127,7 @@
       </details>
       <details class="faq-item">
         <summary>刷写会清空我的书籍和文件吗？</summary>
-        <div class="ans">刷写只写入设备闪存，不处理 TF 卡，书籍与文件不受影响。安装弹窗里不勾选「擦除设备」时，设备内的设置与阅读数据也保持不变；勾选擦除则清空设备内部数据（TF 卡仍不受影响）。</div>
+        <div class="ans">刷写只写入设备闪存，不处理 TF 卡，书籍与文件不受影响。安装弹窗里不勾选「擦除设备」时，设备内的设置与阅读数据也保持不变；勾选擦除则清空设备内部数据（TF 卡仍不受影响）。V1.0.2 起分区布局更新：从旧版本重新刷机后，机内书区会重建一次，机内存放的书需重新传入；TF 卡书籍与全部设置不受影响。</div>
       </details>
       <details class="faq-item">
         <summary>连接后找不到设备怎么办？</summary>
@@ -132,6 +163,22 @@
 
   <script>
     (() => {
+      /* ---- 标签切换 ---- */
+      const tabs = { fw: document.getElementById("tab-fw"), res: document.getElementById("tab-res") };
+      const buttons = [document.getElementById("tab-fw-btn"), document.getElementById("tab-res-btn")];
+      const selectTab = key => {
+        for (const name in tabs) tabs[name].hidden = name !== key;
+        for (const btn of buttons) {
+          const active = btn.dataset.tab === key;
+          btn.classList.toggle("btn-primary", active);
+          btn.style.fontWeight = active ? "700" : "500";
+        }
+        window.scrollTo({top: 0});
+      };
+      for (const btn of buttons) btn.addEventListener("click", () => selectTab(btn.dataset.tab));
+      selectTab("fw");
+
+      /* ---- 浏览器/串口能力检测 ---- */
       let installer = document.getElementById("flash-installer");
       const help = document.getElementById("flash-help");
       const title = document.getElementById("flash-help-title");
@@ -142,14 +189,31 @@
         title.textContent = "本地预览无法刷机，请访问线上刷机页。";
         return;
       }
-      const showInstaller = () => { installer.hidden = !(serialReady && manifestReady); help.hidden = serialReady && manifestReady; };
-      if (!window.isSecureContext) title.textContent = "请使用 HTTPS 打开的刷机页。";
-      else if (!("serial" in navigator)) title.textContent = "当前浏览器无法连接串口，请使用电脑版 Chrome 或 Edge。";
-      else {
-        title.textContent = "正在加载刷机按钮…";
-        const timer = setTimeout(() => { if (installer.hidden) title.textContent = "刷机按钮未能加载，请刷新页面后重试。"; }, 5000);
-        customElements.whenDefined("esp-web-install-button").then(() => { clearTimeout(timer); serialReady = true; showInstaller(); });
+      const showInstaller = () => {
+        installer.hidden = !(serialReady && manifestReady);
+        help.hidden = serialReady && manifestReady;
+      };
+      const setupInstaller = (element, helpEl, titleEl) => {
+        if (!("serial" in navigator)) return;
+        titleEl.textContent = "正在加载安装按钮…";
+        const timer = setTimeout(() => {
+          if (element.hidden) titleEl.textContent = "安装按钮未能加载，请刷新页面后重试。";
+        }, 5000);
+        customElements.whenDefined("esp-web-install-button").then(() => {
+          clearTimeout(timer);
+          serialReady = true;
+          showInstaller();
+        });
+      };
+      if (!window.isSecureContext) {
+        title.textContent = "请使用 HTTPS 打开的刷机页。";
+      } else if (!("serial" in navigator)) {
+        title.textContent = "当前浏览器无法连接串口，请使用电脑版 Chrome 或 Edge。";
+      } else {
+        setupInstaller(installer, help, title);
       }
+
+      /* ---- 固件清单：版本显示 + 校验快照绑定 ---- */
       (async () => {
         try {
           const manifestURL = new URL("../firmware/manifest.json", document.baseURI).href;

@@ -1,0 +1,52 @@
+{
+  "name": "take-easy",
+  "version": "1.0.2",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": false,
+      "parts": [
+        {
+          "path": "v1.0.2/bootloader.bin",
+          "offset": 0,
+          "size": 21232,
+          "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
+        },
+        {
+          "path": "v1.0.2/partitions.bin",
+          "offset": 32768,
+          "size": 3072,
+          "sha256": "399ca4ad739bb3ab8f6b86b6ceae1103660e0db3fb1d376761cf6967db6d6a54"
+        },
+        {
+          "path": "v1.0.2/firmware.bin",
+          "offset": 65536,
+          "size": 3794912,
+          "sha256": "a6b123ec4ceb30cd1bbea2156b8de1608a045955e04564b43b584d3cf01c8f78"
+        },
+        {
+          "path": "v1.0.2/ime_partition_image.bin",
+          "offset": 5316608,
+          "size": 1044810,
+          "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
+        },
+        {
+          "path": "v1.0.2/ota_data_initial.bin",
+          "offset": 11534336,
+          "size": 8192,
+          "sha256": "1502958ab6b1c7e17ecff9fcd2248f32e8a53ec51657c89694082e5f5034fd1c"
+        }
+      ]
+    }
+  ],
+  "pico_ota": {
+    "layout": "pico-ime-compact-1m-v1",
+    "base_version": "1.0.2",
+    "minimum_base_version": "1.0",
+    "previous_version": "1.0.1",
+    "rollback": true
+  },
+  "updated_at": "2026-10-23T10:00:00+08:00",
+  "notes": "V1.0.2（书架提速与输入法精简）：书架打开不再等待卡容量统计，进入即出书；首页天气图标按公版重画（多云/阴/雾/雨/雪更大更清晰）；输入法词库改为精简版随刷机内置（完整单字与常用词组、两分查字、联想、自造词不受影响），刷机写入量从约 7.4MB 降至约 4.9MB、写入时间约减半；四标签切换残影进一步压制（周期性深度清残影）；书架封面灰阶画质与整页色调统一；番茄钟秒表跳动与运行中退出确认。注意：本版更新了分区布局，从旧版本重新刷机后机内书区会重建一次（机内存放的书需重新传入），TF 卡书籍与全部设置不受影响。数据保留：不要勾选「擦除设备」。"
+}

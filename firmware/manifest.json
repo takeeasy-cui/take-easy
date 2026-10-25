@@ -1,6 +1,6 @@
 {
   "name": "take-easy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "new_install_prompt_erase": true,
   "builds": [
     {
@@ -8,45 +8,45 @@
       "improv": false,
       "parts": [
         {
-          "path": "v1.0.2/bootloader.bin",
+          "path": "v1.0.3/bootloader.bin",
           "offset": 0,
           "size": 21232,
           "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
         },
         {
-          "path": "v1.0.2/partitions.bin",
+          "path": "v1.0.3/partitions.bin",
           "offset": 32768,
           "size": 3072,
           "sha256": "399ca4ad739bb3ab8f6b86b6ceae1103660e0db3fb1d376761cf6967db6d6a54"
         },
         {
-          "path": "v1.0.2/firmware.bin",
+          "path": "v1.0.3/firmware.bin",
           "offset": 65536,
-          "size": 3794912,
-          "sha256": "a6b123ec4ceb30cd1bbea2156b8de1608a045955e04564b43b584d3cf01c8f78"
+          "size": 3826960,
+          "sha256": "aa1ffdebe39c582e7c3a4855105f7fc60402cbc25c3c537f114aef4c5a058147"
         },
         {
-          "path": "v1.0.2/ime_partition_image.bin",
+          "path": "v1.0.3/ime_partition_image.bin",
           "offset": 5308416,
           "size": 1044810,
           "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
         },
         {
-          "path": "v1.0.2/ota_data_initial.bin",
+          "path": "v1.0.3/ota_data_initial.bin",
           "offset": 11599872,
           "size": 8192,
-          "sha256": "1502958ab6b1c7e17ecff9fcd2248f32e8a53ec51657c89694082e5f5034fd1c"
+          "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
         }
       ]
     }
   ],
   "pico_ota": {
     "layout": "pico-ime-compact-1m-v1",
-    "base_version": "1.0.2",
+    "base_version": "1.0.3",
     "minimum_base_version": "1.0",
-    "previous_version": "1.0.1",
+    "previous_version": "1.0.2",
     "rollback": true
   },
-  "updated_at": "2026-10-23T10:00:00+08:00",
-  "notes": "V1.0.2（书架提速与输入法精简）：书架打开不再等待卡容量统计，进入即出书；首页天气图标按公版重画（多云/阴/雾/雨/雪更大更清晰）；输入法词库改为精简版随刷机内置（完整单字与常用词组、两分查字、联想、自造词不受影响），刷机写入量从约 7.4MB 降至约 4.9MB、写入时间约减半；四标签切换残影进一步压制（周期性深度清残影）；书架封面灰阶画质与整页色调统一；番茄钟秒表跳动与运行中退出确认。注意：本版更新了分区布局，从旧版本重新刷机后机内书区会重建一次（机内存放的书需重新传入），TF 卡书籍与全部设置不受影响。数据保留：不要勾选「擦除设备」。"
+  "updated_at": "2026-10-25T13:00:00+08:00",
+  "notes": "V1.0.3（阅读体验与游戏更新）：新增阅读自动旋转（设置·屏幕方向新增「旋转锁定」开关，默认锁定，解锁后阅读正文随屏幕姿态自动换向，约 0.6 秒稳定后切换，工具栏与系统界面保持竖屏）；逆转裁判推理游戏修复（列表显示游戏名、对话框名牌上移不再遮挡文字、人物立绘透明与随说话人自动切换、图片全部本地快读更流畅、按键提示改为本机操作说法）；计算器保留前导零（按 08 显示 08）；屏幕旋转后翻页水波纹按当前方向刷新；EPUB 兼容（章节名含冒号可打开、无名章节页不再显示占位标题、整页单张插图上下居中、books 子目录与卡内其他位置的书可正常删除）；电量高段显示稳定（插拔充电器后百分比不再突降）；透明书封锁屏/解锁提速（书封缓存秒进秒出）。"
 }

@@ -23,7 +23,7 @@
           "path": "v1.0.3/firmware.bin",
           "offset": 65536,
           "size": 3826960,
-          "sha256": "aa1ffdebe39c582e7c3a4855105f7fc60402cbc25c3c537f114aef4c5a058147"
+          "sha256": "236b8dfdc2743593e211d7e66c2250fe597c8375bebd613f65ac2b06dd065566"
         },
         {
           "path": "v1.0.3/ime_partition_image.bin",

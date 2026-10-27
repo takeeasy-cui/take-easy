@@ -63,15 +63,17 @@
       <!-- 第 1 步：题库内容 -->
       <div class="card">
         <div class="field">
-          <label>第 1 步 · 上传题库文件（.txt，可选）</label>
-          <input type="file" id="file" accept=".txt,.TXT,text/plain" class="qz-input" style="padding:8px;" />
-          <p class="qz-note">选择文件后自动导入下方编辑框；已有题库包里的 quiz.txt 也能直接导入（标题自动识别）。也可以直接把内容粘贴到下面。</p>
+          <label>第 1 步 · 上传题库文件（.txt / .csv，可选）</label>
+          <input type="file" id="file" accept=".txt,.TXT,.csv,.CSV,.md,text/plain,text/csv" class="qz-input" style="padding:8px;" />
+          <p class="qz-note">支持：①本站 quiz.txt；②常见「序号+选项+答案/解析」文本（Word 复制粘贴）；③制表符或 | 分隔的表格（Excel 复制/CSV）。②③会自动转换成标准格式填入下方。</p>
+          <div id="import-info" class="qz-note" style="display:none;"></div>
         </div>
         <div class="field">
           <label for="body">题库文本（Q / A / B / C / D / R / E 格式）</label>
           <textarea id="body" class="qz-textarea" spellcheck="false" placeholder="Q 题干&#10;A 选项一&#10;B 选项二&#10;C 选项三&#10;D 选项四&#10;R A&#10;E 解析（答错时的讲解）&#10;&#10;（照这个样子，一题一段，可以写很多题）"></textarea>
           <div class="qz-row">
             <button type="button" id="sample" class="btn btn-ghost">填入示例</button>
+            <button type="button" id="smart" class="btn btn-ghost" title="把题号式/表格式题库转成标准格式">外部题库智能转换</button>
             <button type="button" id="clear" class="btn btn-ghost">清空</button>
             <span class="qz-note" style="margin:0;" id="body-info">等待输入…</span>
           </div>
@@ -134,6 +136,32 @@ E 解析：答对答错都会显示，用来加深记忆</pre>
           </div>
         </details>
         <details class="faq-item">
+          <summary>支持导入哪些外部题库格式？</summary>
+          <div class="ans">
+            <p>上传或粘贴后点「外部题库智能转换」，自动识别两种最流行的流通格式：</p>
+            <p><b>① 序号式</b>（Word/试题文档复制粘贴）：题号可带可不带，选项字母后跟 . 、 ： 等分隔符或空格，答案行「答案：/正确答案：」、解析行「解析：/分析：」都能认：</p>
+            <pre class="qz-fmt">1、2026年全业务收入目标是多少万元？
+A 173098
+B. 168888
+C、175500
+D 150000
+答案：A
+解析：全业务173098万元、增幅1.56%。
+
+2、经营方针要求坚持稳中求进、变革创新、以人为本、共创价值。（判断）
+答案：对
+
+3、以下属于经营方针要求的有？（多选）
+A 坚持稳中求进
+B 变革创新
+C 规模优先
+D 以人为本
+正确答案：A B D</pre>
+            <p style="margin:10px 0 0;"><b>② 表格式</b>（Excel 单元格直接复制/CSV）：制表符或 <code>|</code> 分隔；有表头按列名映射（题干/选项A…/答案/题型/解析），无表头按「题干+A-D+答案（+解析）」顺序识别；题型列写 多选/判断 也认。</p>
+            <p style="margin:8px 0 0;">转换时：判断题没写选项会自动补「对/错」；单选只有 3 个选项自动补占位并提醒；含 E/F 选项或读不出答案的题会跳过并说明原因——转换报告一目了然。</p>
+          </div>
+        </details>
+        <details class="faq-item">
           <summary>设备上的练习规则</summary>
           <div class="ans">每次「随机练习」从未毕业的题里随机抽取；<b>连续答对 3 次</b>的题毕业不再出现；答错的题自动进错题集，可单独「错题重练」；答题页有「跳过此题」按钮，跳过后永不再出。进度自动保存在包里，随时接着练。</div>
         </details>
@@ -182,19 +210,278 @@ E 解析：答对答错都会显示，用来加深记忆</pre>
       return lines.join("\n");
     }
 
-    /* ---------- 校验 ---------- */
+    /* ---------- 外部题库识别与转换（2026-10-27：序号式/表格式 → 标准格式） ---------- */
+    const FW = "ＡＢＣＤＥＦａｂｃｄｅｆ", HW = "ABCDEFabcdef";
+    const SEP_CH = "[\\s、,，;；.．·()（）\\[\\]【】：:]";
+    const TF_TXT = ["对", "错", "正确", "错误"];
+    const RX_ANS = /^(?:【\s*答案\s*】|\[\s*答案\s*\]|（\s*答案\s*）|正确答案|参考答案|标准答案|本题答案|我的答案|答案|答)\s*[:：]\s*(.+)$/;
+    const RX_EXP = /^(?:【\s*(?:答案)?\s*解析\s*】|\[\s*(?:答案)?\s*解析\s*\]|（\s*(?:答案)?\s*解析\s*）|答案解析|试题解析|题目解析|(?:解析|分析|讲解|解答|说明|释疑)\s*[:：])\s*(.*)$/;
+    const RX_SKIP = /^(?:\/\/|#\s|【?注[:：】]|备注[:：]|出处[:：]|（?\s*(?:题库|试卷|题目)名称\s*）?[:：]|(?:每题|每空|每小题|单题)\s*\d+\s*分|[一二三四五六七八九十]+[、.．]\s*(?:单项选择题?|单选题|多项选择题?|多选题|不定项选择题?|判断题|是非题|填空题|简答题|问答题|案例分析题|综合题)\s*$)/;
+
+    function halfize(s) { return String(s).replace(/[ＡＢＣＤＥＦａｂｃｄｅｆ／]/g, (c) => { const i = "ＡＢＣＤＥＦａｂｃｄｅｆ／".indexOf(c); return "ABCDEFabcdef/"[i]; }); }
+    function stripSep(v) { return halfize(v).replace(new RegExp(SEP_CH, "g"), ""); }
+    /* 答案字母串：全为 A-D（1–4 个、不重复），归一为升序；非法返回 null */
+    function ansLetters(v) {
+      const t = stripSep(v).toUpperCase();
+      if (!/^[A-D]{1,4}$/.test(t)) return null;
+      return new Set(t).size === t.length ? t.split("").sort().join("") : null;
+    }
+    /* 判断词 → 对/错；非法返回 null */
+    function judgeVal(v) {
+      const t = stripSep(v).toLowerCase();
+      if (["对", "正确", "t", "√", "y"].indexOf(t) >= 0) return "对";
+      if (["错", "错误", "f", "×", "x", "n"].indexOf(t) >= 0) return "错";
+      return null;
+    }
+    /* R 行综合判定（与设备 quiz_engine 同步）：单字母+对错 A/B=判断后验；多字母=多选；判断词=判断 */
+    function analyzeR(raw, opts) {
+      if (raw === null || raw === undefined) return null;
+      const letters = ansLetters(raw);
+      if (letters) {
+        if (letters.length === 1) {
+          const A = ((opts || {}).A || "").trim(), B = ((opts || {}).B || "").trim();
+          if (A && B && TF_TXT.indexOf(A) >= 0 && TF_TXT.indexOf(B) >= 0) {
+            const aYes = A === "对" || A === "正确";
+            return { t: "judge", r: (letters === "A") === aYes ? "对" : "错", letters: letters };
+          }
+          return { t: "single", r: letters };
+        }
+        return { t: "multi", r: letters };
+      }
+      const jv = judgeVal(raw);
+      return jv ? { t: "judge", r: jv } : null;
+    }
+
+    function brief(s) { return String(s || "").replace(/\s+/g, " ").slice(0, 12); }
+    function joinEx(a, b) {
+      const t = String(b || "").replace(/\s+/g, " ").trim();
+      if (!t) return a || "";
+      if (!a) return t;
+      return a.replace(/[。；;，,]\s*$/, "") + "；" + t;
+    }
+
+    /* 选项行：字母（含全角）+ 分隔符/空格 + 正文。要求分隔符避免误伤正文，如「B 超…」无分隔不匹配 */
+    function matchOption(l) {
+      const m = l.match(/^([A-Fa-fＡ-Ｆａ-ｆ])(?:[.、．,，:：;；)）]|\s+)\s*(.+)$/);
+      if (!m) return null;
+      const i = "ＡＢＣＤＥＦａｂｃｄｅｆ".indexOf(m[1]);
+      return { letter: (i >= 0 ? "ABCDEFabcdef"[i] : m[1]).toUpperCase(), text: m[2].trim() };
+    }
+    /* 题号剥离：第N题 / （N）/ N.、）：等 / N 空格 */
+    function stemNumbered(l) {
+      let m = l.match(/^(?:第\s*\d{1,3}\s*[题问]\s*[.、．:：)）]?|[（(]\s*\d{1,3}\s*[)）]|[（(]?\d{1,3}[）)]?\s*[.、．:：)）])\s*(.*)$/);
+      if (m) return m[1].trim();
+      m = l.match(/^\d{1,3}\s+(.+)$/);
+      return m ? m[1].trim() : null;
+    }
+    /* 题型标记：括号内含 多选/判断 等短词 → 剥离并标记 */
+    function stripMarks(stem) {
+      const st = { multi: false, judge: false };
+      const out = String(stem || "").replace(/[（(\[【]([^（()\[【]{0,8}?)[）)\]】]/g, (full, inner) => {
+        if (/多选|多项|不定项|复选/.test(inner)) { st.multi = true; return " "; }
+        if (/判断|是非/.test(inner)) { st.judge = true; return " "; }
+        return full;
+      });
+      return { stem: out.replace(/\s+/g, " ").trim(), multi: st.multi, judge: st.judge };
+    }
+
+    /* 单题发射：题型判定 → 内部格式行 */
+    function emitQuestion(acc, q) {
+      const sm = stripMarks(q.stem);
+      const stem = sm.stem;
+      if (!stem) { acc.drops.push("有题目题干为空，已跳过"); return; }
+      if (q.ef) { acc.drops.push("“" + brief(stem) + "”含 E/F 选项（设备最多 4 个选项），已跳过"); return; }
+      const letters = ansLetters(q.ans);
+      const jv = judgeVal(q.ans);
+      const A = (q.opts.A || "").trim(), B = (q.opts.B || "").trim();
+      const abTF = !!A && !!B && TF_TXT.indexOf(A) >= 0 && TF_TXT.indexOf(B) >= 0;
+      let t, R;
+      if (letters) {
+        if (letters.length === 1 && abTF) {
+          t = "judge";
+          const aYes = A === "对" || A === "正确";
+          R = (letters === "A") === aYes ? "对" : "错";
+        } else if (letters.length >= 2 || sm.multi || q.multi) {
+          if (letters.length === 1) { acc.notes.push("“" + brief(stem) + "”标注多选但答案只有 1 个字母，按单选处理"); t = "single"; }
+          else t = "multi";
+          R = letters;
+        } else { t = "single"; R = letters; }
+      } else if (jv) {
+        t = "judge"; R = jv;
+        if (!abTF) {
+          if (A || B || (q.opts.C || "") || (q.opts.D || ""))
+            acc.notes.push("“" + brief(stem) + "”是判断题但 A/B 不是 对/错 文本，已重置为 对/错 两项");
+          q.opts = {};
+        }
+      } else {
+        acc.drops.push("“" + brief(stem) + "”答案无法识别（" + (q.ans ? "“" + brief(q.ans) + "”" : "未找到答案行") + "），已跳过");
+        return;
+      }
+      const L = ["Q " + stem];
+      if (t === "judge") {
+        const jA = TF_TXT.indexOf(A) >= 0 && A ? A : "对";
+        let jB = TF_TXT.indexOf(B) >= 0 && B ? B : "";
+        if (!jB) { const yes = jA === "对" || jA === "正确"; jB = yes ? "错" : "对"; }
+        L.push("A " + jA);
+        L.push("B " + jB);
+      } else {
+        const pad = [];
+        for (const k of ["A", "B", "C", "D"]) {
+          let v = (q.opts[k] || "").trim();
+          if (!v) { v = "（无此选项）"; pad.push(k); }
+          L.push(k + " " + v);
+        }
+        if (pad.length) acc.notes.push("“" + brief(stem) + "”缺 " + pad.join("/") + " 选项，已补“（无此选项）”占位");
+      }
+      L.push("R " + R);
+      if (q.exp && String(q.exp).trim()) L.push("E " + String(q.exp).trim());
+      L.push("");
+      acc.lines.push(L.join("\n"));
+      acc.kinds[t] = (acc.kinds[t] || 0) + 1;
+    }
+
+    /* ① 序号式（Word 复制粘贴） */
+    function convertNumbered(text, acc) {
+      const lines = text.split("\n");
+      let cur = null, unflag = false;
+      const flush = () => { if (cur) { emitQuestion(acc, cur); cur = null; } };
+      const start = (stem) => { flush(); cur = { stem, opts: {}, ans: "", exp: "", ef: "" }; };
+      lines.forEach((raw, i) => {
+        const l = halfize(raw).replace(/[\u00A0\u3000]/g, " ").trim();
+        if (!l) return;
+        if (RX_SKIP.test(l)) return;
+        let m = l.match(RX_ANS);
+        if (m) {
+          if (cur) {
+            let v = m[1];
+            const me = v.match(/解\s*析\s*[:：]?\s*(.+)$/);
+            if (me) { v = v.slice(0, me.index).trim(); cur.exp = joinEx(cur.exp, me[1]); }
+            if (v) { if (!cur.ans) cur.ans = v; else cur.exp = joinEx(cur.exp, v); }
+          }
+          return;
+        }
+        m = l.match(RX_EXP);
+        if (m) { if (cur) cur.exp = joinEx(cur.exp, m[1]); return; }
+        const o = matchOption(l);
+        if (o) {
+          if (!cur) { acc.drops.push("第 " + (i + 1) + " 行的选项 " + o.letter + " 出现在题干之前，忽略"); return; }
+          if (o.letter === "E" || o.letter === "F") { cur.ef += o.letter; return; }
+          if (cur.opts[o.letter] != null) cur.opts[o.letter] += " " + o.text;
+          else cur.opts[o.letter] = o.text;
+          return;
+        }
+        const st = stemNumbered(l);
+        if (st !== null) { start(st); return; }
+        if (!cur) { start(l); if (!unflag) { acc.notes.push("首题未带题号，已按题干识别"); unflag = true; } return; }
+        const hasOpt = cur.opts.A != null || cur.opts.B != null || cur.opts.C != null || cur.opts.D != null;
+        if (cur.ans) { cur.exp = joinEx(cur.exp, l); return; }
+        if (!hasOpt) { cur.stem += " " + l; return; }
+        const ks = ["A", "B", "C", "D"].filter((k) => cur.opts[k] != null);
+        cur.opts[ks[ks.length - 1]] += " " + l;
+      });
+      flush();
+    }
+
+    /* ② 表格式（Excel 复制/CSV：制表符或 | 分隔） */
+    function convertTable(text, acc) {
+      const raw = text.split("\n").map((s) => s.trim()).filter(Boolean);
+      if (!raw.length) return;
+      const tabRows = raw.filter((l) => (l.match(/\t/g) || []).length >= 3).length;
+      const sep = tabRows >= raw.length / 2 ? "\t" : "|";
+      let rows = raw.map((l) => l.split(sep).map((c) => c.trim()));
+      let map = null;
+      const h = rows[0].map((c) => halfize(c).replace(/\s+/g, ""));
+      if (h.some((c) => /题干|题目|题面|问题/.test(c)) && h.some((c) => /答案|解析|题型/.test(c))) {
+        const optIdx = {};
+        h.forEach((c, i) => { const mm = c.match(/^[（(]?(?:选项)?([A-D])[）)]?$/); if (mm) optIdx[mm[1]] = i; });
+        const col = (rx) => h.findIndex((c) => rx.test(c));
+        const cStem = col(/题干|题目|题面|问题/);
+        const cAns = col(/正确答案|参考答案|标准答案|答案/);
+        const cExp = col(/解析|说明|备注/);
+        const cTyp = col(/题型|类型/);
+        if (cStem >= 0 && cAns >= 0) { map = { mode: "head", stem: cStem, ans: cAns, exp: cExp, typ: cTyp, optIdx }; rows = rows.slice(1); }
+      }
+      if (!map) {
+        const ncol = rows.reduce((mx, r) => Math.max(mx, r.length), 0);
+        let best = -1, bestHits = 0;
+        for (let c = 1; c < ncol; c++) {
+          const hits = rows.filter((r) => (r[c] || "") && (ansLetters(r[c]) || judgeVal(r[c]))).length;
+          if (hits >= bestHits) { bestHits = hits; best = c; }   /* 右侧优先 */
+        }
+        if (best < 0 || bestHits < 1) { acc.drops.push("表格式未找到答案列（各列都不像 A-D 字母或 对/错），整表跳过"); return; }
+        map = { mode: "auto", stem: 0, ans: best, typ: -1, optIdx: null, optEnd: best };
+      }
+      rows.forEach((r, ri) => {
+        const stem = (r[map.stem] || "").trim();
+        if (!stem) { acc.drops.push("表格第 " + (ri + 1) + " 行题干为空，已跳过"); return; }
+        const q = { stem, opts: {}, ans: "", exp: "", multi: false };
+        if (map.mode === "head") {
+          for (const k in map.optIdx) q.opts[k] = (r[map.optIdx[k]] || "").trim();
+          q.ans = (r[map.ans] || "").trim();
+          q.exp = map.exp >= 0 ? (r[map.exp] || "").trim() : "";
+          if (map.typ >= 0) { const tp = halfize(r[map.typ] || "").replace(/\s+/g, ""); if (/多选|多项|不定项|复选/.test(tp)) q.multi = true; }
+        } else {
+          q.ans = (r[map.ans] || "").trim();
+          q.exp = r.slice(map.ans + 1).map((c) => (c || "").trim()).filter(Boolean).join("；");
+          let oi = 0;
+          for (let c = 1; c < map.optEnd && c < r.length; c++) {
+            const v = (r[c] || "").trim();
+            if (!v) continue;
+            if (oi >= 4) { acc.drops.push("表格第 " + (ri + 1) + " 行选项超过 4 个，跳过该题"); return; }
+            q.opts["ABCD"[oi]] = v;
+            oi++;
+          }
+        }
+        emitQuestion(acc, q);
+      });
+    }
+
+    function convertExternal(text) {
+      const ne = String(text || "").split("\n").filter((l) => l.trim());
+      if (/^Q /m.test(text || "")) return { kind: "internal", internal: true };
+      if (!ne.length) return { kind: "internal", internal: true };
+      const tabish = ne.filter((l) => (l.match(/\t/g) || []).length >= 3).length;
+      const pipeish = ne.filter((l) => (l.match(/\|/g) || []).length >= 4).length;
+      const kind = tabish + pipeish >= Math.max(1, Math.ceil(ne.length / 2)) ? "table" : "numbered";
+      const acc = { lines: [], notes: [], drops: [], kinds: { single: 0, multi: 0, judge: 0 } };
+      try { (kind === "table" ? convertTable : convertNumbered)(text, acc); }
+      catch (e) { return { kind: kind, internal: false, err: "转换失败：" + (e && e.message ? e.message : e), text: "" }; }
+      const total = acc.kinds.single + acc.kinds.multi + acc.kinds.judge;
+      if (!total) return { kind: kind, internal: false, err: "未能识别出任何题目——试试把「答案：/正确答案：」行补齐，或查看下方格式说明", text: "", kinds: acc.kinds, notes: acc.notes, drops: acc.drops };
+      const out = acc.lines.join("\n").replace(/\n{3,}/g, "\n\n").replace(/\s+$/g, "") + "\n";
+      return { kind: kind, internal: false, text: out, total: total, kinds: acc.kinds, notes: acc.notes, drops: acc.drops };
+    }
+
+    /* ---------- 校验（R 规则与设备固件同步：多选/判断） ---------- */
     function parse(text) {
       const lines = text.split("\n");
       const errors = [], warns = [];
+      const kinds = { single: 0, multi: 0, judge: 0 };
       let cur = null, qn = 0;
       const flush = () => {
         if (!cur) return;
-        for (const k of ["A", "B", "C", "D"])
-          if (!cur.has[k]) errors.push({ q: cur.n, line: cur.line, msg: "缺少 " + k + " 选项" });
-          else if (cur.has[k] > 1) errors.push({ q: cur.n, line: cur.line, msg: k + " 选项重复" });
-        if (!cur.R) errors.push({ q: cur.n, line: cur.line, msg: "缺少 R（正确答案）" });
-        else if (!/^[ABCD]$/.test(cur.R.trim()))
-          errors.push({ q: cur.n, line: cur.line, msg: "R 必须是 A/B/C/D 之一（当前：“" + cur.R.trim().slice(0, 12) + "”）" });
+        const ar = analyzeR(cur.R, cur.opts);
+        if (!ar)
+          errors.push({ q: cur.n, line: cur.line, msg: "R 无法识别（" + (cur.R === null ? "未填" : "“" + cur.R.trim().slice(0, 12) + "”") + "）：单选 1 个字母、多选 2-4 个字母、判断写 对 或 错" });
+        else if (ar.t === "judge") {
+          kinds.judge++;
+          for (const k of ["A", "B"])
+            if (!cur.has[k]) errors.push({ q: cur.n, line: cur.line, msg: "判断题缺少 " + k + " 行（需 A 对 / B 错）" });
+            else if (cur.has[k] > 1) errors.push({ q: cur.n, line: cur.line, msg: k + " 行重复" });
+          if (cur.has.A === 1 && cur.has.B === 1) {
+            const A = (cur.opts.A || "").trim(), B = (cur.opts.B || "").trim();
+            if (TF_TXT.indexOf(A) < 0 || TF_TXT.indexOf(B) < 0)
+              errors.push({ q: cur.n, line: cur.line, msg: "判断题 A、B 行需为 对/错（或 正确/错误）文本" });
+          }
+          for (const k of ["C", "D"])
+            if (cur.has[k] === 1 && (cur.opts[k] || "").trim())
+              warns.push({ q: cur.n, line: cur.line, msg: "判断题只显示 A/B 两项，" + k + " 行将被忽略" });
+        } else {
+          kinds[ar.t]++;
+          for (const k of ["A", "B", "C", "D"])
+            if (!cur.has[k]) errors.push({ q: cur.n, line: cur.line, msg: "缺少 " + k + " 选项" });
+            else if (cur.has[k] > 1) errors.push({ q: cur.n, line: cur.line, msg: k + " 选项重复" });
+        }
         if (cur.has.Q > 1) errors.push({ q: cur.n, line: cur.line, msg: "题干行重复" });
         if (!cur.stem.trim()) errors.push({ q: cur.n, line: cur.line, msg: "题干为空" });
         for (const k of ["A", "B", "C", "D"])
@@ -225,15 +512,16 @@ E 解析：答对答错都会显示，用来加深记忆</pre>
         if (k === "E") cur.exLen = bytes(v);
       });
       flush();
-      if (qn === 0) errors.push({ line: 0, msg: "未检测到题目：需要以“Q ”开头的题干行" });
+      if (qn === 0) errors.push({ line: 0, msg: "未检测到题目：需要以“Q ”开头的题干行（其他格式请点「外部题库智能转换」）" });
       if (qn > MAX_Q) errors.push({ line: 0, msg: "题目数 " + qn + " 超过设备上限 " + MAX_Q });
-      return { count: qn, errors, warns };
+      return { count: qn, errors, warns, kinds };
     }
 
     /* ---------- 渲染 ---------- */
     function show(v) {
       const p = [];
       p.push('<span class="qz-pill ' + (v.count ? "ok" : "mute") + '">共 ' + v.count + " 题</span>");
+      if (v.count) p.push('<span class="qz-pill mute">单选 ' + v.kinds.single + " · 判断 " + v.kinds.judge + " · 多选 " + v.kinds.multi + "</span>");
       p.push('<span class="qz-pill ' + (v.errors.length ? "bad" : "ok") + '">错误 ' + v.errors.length + "</span>");
       p.push('<span class="qz-pill ' + (v.warns.length ? "warn" : "mute") + '">提醒 ' + v.warns.length + "</span>");
       const bin = bytes(body.value);
@@ -324,18 +612,54 @@ E 解析：答对答错都会显示，用来加深记忆</pre>
     let vTimer = 0;
     function revalidate() { show(parse(normalizeBody(body.value))); }
     body.addEventListener("input", () => { clearTimeout(vTimer); vTimer = setTimeout(revalidate, 250); saveSoon(); });
+    /* ---------- 外部题库导入 ---------- */
+    function showImport(r, fname) {
+      const el = $("import-info");
+      el.style.display = "";
+      if (r.err) { el.innerHTML = '<b style="color:#d81b4f;">✗ ' + esc(r.err) + "</b>"; return; }
+      const head = "✓ 识别为「" + (r.kind === "table" ? "表格式" : "答案/解析序号式") + "」" + (fname ? "（" + esc(fname) + "）" : "") +
+        "，已转换为标准格式：<b>" + r.total + "</b> 题（单选 " + r.kinds.single + " · 判断 " + r.kinds.judge + " · 多选 " + r.kinds.multi + "）。可先校验再生成。";
+      const list = [];
+      (r.drops || []).forEach((d) => list.push('<li class="e">✗ ' + esc(d) + "</li>"));
+      (r.notes || []).forEach((x) => list.push('<li class="w">! ' + esc(x) + "</li>"));
+      el.innerHTML = list.length
+        ? head + '<details style="margin-top:4px;"><summary>转换提示 ' + list.length + " 条（点开查看）</summary><ul class=\"qz-issues\">" + list.join("") + "</ul></details>"
+        : head;
+    }
+
     $("file").addEventListener("change", (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
       const r = new FileReader();
       r.onload = () => {
         const text = stripBom(String(r.result || ""));
-        const m = text.match(/^\*\s*title[ \t]+(.+)$/m);
-        if (m && !title.value.trim()) title.value = m[1].trim();
-        body.value = text;
+        const conv = convertExternal(text);
+        if (conv.internal) {
+          $("import-info").style.display = "none";
+          const m = text.match(/^\*\s*title[ \t]+(.+)$/m);
+          if (m && !title.value.trim()) title.value = m[1].trim();
+          body.value = text;
+        } else if (conv.err) {
+          showImport(conv, f.name);
+        } else {
+          body.value = conv.text;
+          showImport(conv, f.name);
+          if (!title.value.trim()) title.value = f.name.replace(/\.[^.]+$/, "").slice(0, 40);
+        }
         syncPkg(); revalidate(); saveSoon();
       };
       r.readAsText(f, "utf-8");
+    });
+
+    $("smart").addEventListener("click", () => {
+      const raw = body.value.trim();
+      if (!raw) { showImport({ err: "编辑框是空的——先把其他题库的文本（Word 复制 / Excel 复制）粘贴进来，再点转换。" }); return; }
+      const conv = convertExternal(raw);
+      if (conv.err) { showImport(conv); return; }
+      if (conv.internal) { showImport({ err: "当前内容已是标准 Q/A/B/C/D/R/E 格式，无需转换。" }); return; }
+      body.value = conv.text;
+      showImport(conv);
+      revalidate(); saveSoon();
     });
     $("sample").addEventListener("click", () => {
       body.value =
@@ -352,13 +676,27 @@ E 解析：答对答错都会显示，用来加深记忆</pre>
 "C 产品为根\n" +
 "D 品牌为纲\n" +
 "R B\n" +
-"E 五为＝客户为上、触点为先、产品为根、服务为本、品牌为纲，没有“渠道为王”。";
+"E 五为＝客户为上、触点为先、产品为根、服务为本、品牌为纲，没有“渠道为王”。\n\n" +
+"Q 经营方针要求坚持稳中求进、变革创新、以人为本、共创价值。\n" +
+"A 对\n" +
+"B 错\n" +
+"R 对\n" +
+"E 十六字方针原文。\n\n" +
+"Q 以下属于 2026 年经营方针要求的有？\n" +
+"A 坚持稳中求进\n" +
+"B 变革创新\n" +
+"C 规模优先、速度至上\n" +
+"D 以人为本、共创价值\n" +
+"R ABD\n" +
+"E 十六字方针；“规模优先、速度至上”与正确政绩观相悖。";
       if (!title.value.trim()) title.value = "示例题库";
+      $("import-info").style.display = "none";
       syncPkg(); revalidate(); saveSoon();
     });
     $("clear").addEventListener("click", () => {
       body.value = ""; title.value = ""; pkg.value = ""; pkgTouched = false;
-      $("file").value = ""; revalidate(); saveSoon();
+      $("file").value = ""; $("import-info").style.display = "none";
+      revalidate(); saveSoon();
     });
 
     /* ---------- 生成 ---------- */
@@ -404,7 +742,7 @@ E 解析：答对答错都会显示，用来加深记忆</pre>
     /* 首次进入 */
     revalidate();
     if (!body.value && !title.value) { $("sample").click(); }
-    window.__qz = { makeZip: makeZip, normalizeBody: normalizeBody, parse: parse, buildContent: buildContent };
+    window.__qz = { makeZip: makeZip, normalizeBody: normalizeBody, parse: parse, buildContent: buildContent, analyzeR: analyzeR, convertExternal: convertExternal };
   })();
   </script>
 </body>

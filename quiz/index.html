@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>题库工坊 · Take Easy</title>
+  <meta name="description" content="Take Easy 习测题库工坊：上传题库文本、命名，一键生成设备可用的题库包 zip。" />
+  <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
+  <link rel="stylesheet" href="../assets/css/style.css?v=1.0.1" />
+  <style>
+    /* 工坊页专用补充样式（沿用站点卡片/配色语言） */
+    .qz-textarea{width:100%;min-height:260px;padding:12px 14px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+      border:1px solid rgba(0,0,0,.14);border-radius:10px;background:#fff;color:#1c1c1e;resize:vertical;box-sizing:border-box;}
+    .qz-textarea:focus{outline:none;border-color:rgba(10,132,255,.65);box-shadow:0 0 0 3px rgba(10,132,255,.14);}
+    .qz-input{width:100%;padding:10px 12px;font:14px/1.4 inherit;border:1px solid rgba(0,0,0,.14);border-radius:10px;
+      background:#fff;color:#1c1c1e;box-sizing:border-box;}
+    .qz-input:focus{outline:none;border-color:rgba(10,132,255,.65);box-shadow:0 0 0 3px rgba(10,132,255,.14);}
+    .qz-pkg{display:flex;align-items:center;gap:0;border:1px solid rgba(0,0,0,.14);border-radius:10px;background:#fff;overflow:hidden;}
+    .qz-pkg .aff{padding:10px 10px 10px 12px;font-size:13px;color:var(--text-3);white-space:nowrap;background:rgba(0,0,0,.03);}
+    .qz-pkg input{flex:1;border:0;padding:10px 12px 10px 0;font-size:14px;background:transparent;color:#1c1c1e;}
+    .qz-pkg input:focus{outline:none;}
+    .qz-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+    .qz-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;}
+    .qz-pill.ok{background:rgba(52,199,89,.12);color:#1d8a3d;}
+    .qz-pill.bad{background:rgba(255,45,85,.10);color:#d81b4f;}
+    .qz-pill.warn{background:rgba(255,149,0,.12);color:#b26a00;}
+    .qz-pill.mute{background:rgba(0,0,0,.05);color:var(--text-3);}
+    .qz-issues{list-style:none;margin:10px 0 0;padding:0;font-size:13px;line-height:1.7;max-height:250px;overflow:auto;}
+    .qz-issues li{padding:2px 0;border-bottom:1px dashed rgba(0,0,0,.06);}
+    .qz-issues .e{color:#d81b4f;}
+    .qz-issues .w{color:#b26a00;}
+    .qz-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+    .qz-note{font-size:12.5px;color:var(--text-3);margin-top:8px;line-height:1.8;}
+    pre.qz-fmt{background:rgba(0,0,0,.04);border-radius:10px;padding:12px 14px;font:12.5px/1.7 ui-monospace,Consolas,monospace;overflow:auto;margin:8px 0 0;}
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../"><img src="../assets/icons/fox-logo.png" alt="Take Easy 图标" style="height:24px;width:auto;" /><span>Take Easy</span></a>
+      <div class="nav-links">
+        <a href="../">首页</a>
+        <a href="../docs/">使用说明</a>
+        <a href="../changelog/">更新日志</a>
+        <a class="btn btn-primary" href="../">返回主页</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" style="padding:84px 0 44px;">
+    <div class="container" style="max-width:860px;">
+      <span class="kicker">习测 · 应知应会题库生产线</span>
+      <h1 style="font-size:40px;">题库工坊</h1>
+      <p class="sub">粘贴或上传题库，命名，生成设备可用的题库包。</p>
+      <p class="meta">全部在浏览器本地完成 · 题库内容不会上传到任何服务器</p>
+    </div>
+  </header>
+
+  <section class="section" id="tool" style="padding-top:8px;">
+    <div class="container" style="max-width:860px;">
+
+      <!-- 第 1 步：题库内容 -->
+      <div class="card">
+        <div class="field">
+          <label>第 1 步 · 上传题库文件（.txt，可选）</label>
+          <input type="file" id="file" accept=".txt,.TXT,text/plain" class="qz-input" style="padding:8px;" />
+          <p class="qz-note">选择文件后自动导入下方编辑框；已有题库包里的 quiz.txt 也能直接导入（标题自动识别）。也可以直接把内容粘贴到下面。</p>
+        </div>
+        <div class="field">
+          <label for="body">题库文本（Q / A / B / C / D / R / E 格式）</label>
+          <textarea id="body" class="qz-textarea" spellcheck="false" placeholder="Q 题干&#10;A 选项一&#10;B 选项二&#10;C 选项三&#10;D 选项四&#10;R A&#10;E 解析（答错时的讲解）&#10;&#10;（照这个样子，一题一段，可以写很多题）"></textarea>
+          <div class="qz-row">
+            <button type="button" id="sample" class="btn btn-ghost">填入示例</button>
+            <button type="button" id="clear" class="btn btn-ghost">清空</button>
+            <span class="qz-note" style="margin:0;" id="body-info">等待输入…</span>
+          </div>
+          <div class="qz-pills" id="pills"></div>
+          <ul class="qz-issues" id="issues"></ul>
+        </div>
+      </div>
+
+      <!-- 第 2 步：名称 -->
+      <div class="card" style="margin-top:16px;">
+        <div class="field">
+          <label for="title">第 2 步 · 题库名称（设备列表里显示的名字）</label>
+          <input type="text" id="title" class="qz-input" maxlength="40" placeholder="例如：2026应知应会" />
+        </div>
+        <div class="field">
+          <label for="pkg">包名（文件名，可用中文；建议简短）</label>
+          <div class="qz-pkg" id="pkg-box">
+            <span class="aff">quiz-</span>
+            <input type="text" id="pkg" maxlength="42" placeholder="例如：2026exam" />
+            <span class="aff" style="padding-right:12px;">.zip</span>
+          </div>
+          <p class="qz-note">留空则自动使用题库名称。“quiz-” 前缀是设备识别习测包的规则，不要改动。</p>
+        </div>
+      </div>
+
+      <!-- 第 3 步：生成 -->
+      <div class="card" style="margin-top:16px;">
+        <div class="field">
+          <label>第 3 步 · 校验并生成</label>
+          <div id="summary" class="qz-note" style="margin-top:0;">先填题库，校验通过后即可生成。</div>
+          <div class="qz-row" style="margin-top:14px;">
+            <button type="button" id="make" class="btn btn-primary btn-lg">生成题库包（zip）</button>
+            <button type="button" id="dl-txt" class="btn btn-ghost">仅下载 quiz.txt</button>
+          </div>
+          <ul class="qz-issues" id="gen-issues"></ul>
+        </div>
+      </div>
+
+      <!-- 使用方法 -->
+      <div class="notice info" style="margin-top:16px;">
+        <div>
+          <b>怎么装进设备？</b> 生成的 zip 直接拷进 TF 卡根目录的 <b>games</b> 文件夹（不用解压，与游戏包放一起），设备「应用 → 习测」里就会出现这个题库。需要含「习测」应用的固件版本。
+        </div>
+      </div>
+
+      <!-- 格式说明 -->
+      <div class="card" style="margin-top:16px;padding:8px 24px;">
+        <details class="faq-item">
+          <summary>题库格式说明</summary>
+          <div class="ans">
+            <p>一题一段，七个字母行，<b>字母必须在行首</b>（前面不能有空格），字母后跟一个空格：</p>
+            <pre class="qz-fmt">Q 题干（问句）
+A 第一个选项
+B 第二个选项
+C 第三个选项
+D 第四个选项
+R A          ← 正确答案（A/B/C/D 中的一个字母）
+E 解析：答对答错都会显示，用来加深记忆</pre>
+            <p style="margin:10px 0 0;">规则：<b>Q</b> 开始新一题；四个选项 <b>A–D</b> 与答案 <b>R</b> 必填，<b>E</b> 建议填写；<code>//</code> 开头的行是注释，空行随意；单行题干/选项≤85 个汉字、解析≤170 个汉字（超长设备端会截断）；单包最多 512 题。</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>设备上的练习规则</summary>
+          <div class="ans">每次「随机练习」从未毕业的题里随机抽取；<b>连续答对 3 次</b>的题毕业不再出现；答错的题自动进错题集，可单独「错题重练」；答题页有「跳过此题」按钮，跳过后永不再出。进度自动保存在包里，随时接着练。</div>
+        </details>
+        <details class="faq-item">
+          <summary>我的数据存在哪里？</summary>
+          <div class="ans">题库文本和名称只保存在当前浏览器的本地存储里（下次打开还在），生成 zip 的计算也在你的电脑上完成，不经任何服务器。</div>
+        </details>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="links">
+      <a href="../">返回主页</a>
+      <a href="../install/">在线刷机</a>
+      <a href="../docs/">使用说明</a>
+      <a href="../changelog/">更新日志</a>
+      <a href="https://github.com/takeeasy-cui/take-easy-firmware">固件源码</a>
+    </div>
+    <p>© 2026 Take Easy · 放轻松，你已经开始准备放松了</p>
+  </footer>
+
+  <script>
+  (() => {
+    "use strict";
+    const enc = new TextEncoder();
+    const $ = (id) => document.getElementById(id);
+    const body = $("body"), title = $("title"), pkg = $("pkg");
+    const pills = $("pills"), issues = $("issues"), summary = $("summary");
+    const genIssues = $("gen-issues"), bodyInfo = $("body-info");
+    const MAX_Q = 512, MAX_FILE = 1024 * 1024;
+
+    /* ---------- 工具 ---------- */
+    const bytes = (s) => enc.encode(s).length;
+    const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    function stripBom(t) { return t.startsWith("\uFEFF") ? t.slice(1) : t; }
+
+    /* 规范化：BOM/CRLF 清除、剥旧 * title 行、行首空格去除、收尾空行整理 */
+    function normalizeBody(text) {
+      const lines = stripBom(text).replace(/\r\n?/g, "\n").split("\n")
+        .filter((l) => !/^\*\s*title/.test(l))
+        .map((l) => l.replace(/^[ \t]+/, ""));
+      while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+      return lines.join("\n");
+    }
+
+    /* ---------- 校验 ---------- */
+    function parse(text) {
+      const lines = text.split("\n");
+      const errors = [], warns = [];
+      let cur = null, qn = 0;
+      const flush = () => {
+        if (!cur) return;
+        for (const k of ["A", "B", "C", "D"])
+          if (!cur.has[k]) errors.push({ q: cur.n, line: cur.line, msg: "缺少 " + k + " 选项" });
+          else if (cur.has[k] > 1) errors.push({ q: cur.n, line: cur.line, msg: k + " 选项重复" });
+        if (!cur.R) errors.push({ q: cur.n, line: cur.line, msg: "缺少 R（正确答案）" });
+        else if (!/^[ABCD]$/.test(cur.R.trim()))
+          errors.push({ q: cur.n, line: cur.line, msg: "R 必须是 A/B/C/D 之一（当前：“" + cur.R.trim().slice(0, 12) + "”）" });
+        if (cur.has.Q > 1) errors.push({ q: cur.n, line: cur.line, msg: "题干行重复" });
+        if (!cur.stem.trim()) errors.push({ q: cur.n, line: cur.line, msg: "题干为空" });
+        for (const k of ["A", "B", "C", "D"])
+          if (cur.has[k] === 1 && !cur.opts[k].trim())
+            warns.push({ q: cur.n, line: cur.line, msg: k + " 选项内容为空" });
+        if (!cur.has.E) warns.push({ q: cur.n, line: cur.line, msg: "未写 E 解析（建议补上，答题反馈时显示）" });
+        if (cur.stemLen > 255) warns.push({ q: cur.n, line: cur.line, msg: "题干超 255 字节，设备端将截断" });
+        for (const k of ["A", "B", "C", "D"])
+          if (cur.optLen[k] > 255) warns.push({ q: cur.n, line: cur.line, msg: k + " 选项超 255 字节，设备端将截断" });
+        if (cur.exLen > 511) warns.push({ q: cur.n, line: cur.line, msg: "解析超 511 字节，设备端将截断" });
+      };
+      lines.forEach((l, i) => {
+        const ln = i + 1;
+        if (/^Q /.test(l)) {
+          flush();
+          cur = { n: ++qn, line: ln, has: { Q: 1, A: 0, B: 0, C: 0, D: 0, E: 0 }, R: null,
+                  stem: l.slice(2), stemLen: bytes(l.slice(2)),
+                  opts: {}, optLen: {}, exLen: 0 };
+          return;
+        }
+        if (!cur) return;
+        const m = l.match(/^([A-ER]) (.*)$/);
+        if (!m) return; /* 注释/空行等设备端忽略 */
+        const k = m[1], v = m[2];
+        if (k === "R") { if (cur.R !== null) errors.push({ q: cur.n, line: ln, msg: "R 重复" }); else cur.R = v; return; }
+        cur.has[k]++;
+        cur.opts[k] = v; cur.optLen[k] = bytes(v);
+        if (k === "E") cur.exLen = bytes(v);
+      });
+      flush();
+      if (qn === 0) errors.push({ line: 0, msg: "未检测到题目：需要以“Q ”开头的题干行" });
+      if (qn > MAX_Q) errors.push({ line: 0, msg: "题目数 " + qn + " 超过设备上限 " + MAX_Q });
+      return { count: qn, errors, warns };
+    }
+
+    /* ---------- 渲染 ---------- */
+    function show(v) {
+      const p = [];
+      p.push('<span class="qz-pill ' + (v.count ? "ok" : "mute") + '">共 ' + v.count + " 题</span>");
+      p.push('<span class="qz-pill ' + (v.errors.length ? "bad" : "ok") + '">错误 ' + v.errors.length + "</span>");
+      p.push('<span class="qz-pill ' + (v.warns.length ? "warn" : "mute") + '">提醒 ' + v.warns.length + "</span>");
+      const bin = bytes(body.value);
+      p.push('<span class="qz-pill mute">文本 ' + bin + " B</span>");
+      pills.innerHTML = p.join("");
+      const all = v.errors.concat(v.warns.map((w) => Object.assign({}, w, { w: 1 })));
+      issues.innerHTML = all.slice(0, 40).map((x) =>
+        '<li class="' + (x.w ? "w" : "e") + '">第 ' + (x.q || "?") + " 题" + (x.line ? "（第 " + x.line + " 行）" : "") + "：" + esc(x.msg) + "</li>").join("") +
+        (all.length > 40 ? '<li class="w">…还有 ' + (all.length - 40) + " 条</li>" : "");
+      bodyInfo.textContent = v.count
+        ? (v.errors.length ? "有错误，生成将被阻止——看下面清单逐条修。" : "格式检查通过，可以生成。")
+        : "等待输入…";
+    }
+
+    /* ---------- ZIP（STORE，设备 zip_reader 原生支持） ---------- */
+    let CRC_T = null;
+    function crcTable() {
+      if (CRC_T) return CRC_T;
+      const t = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+        t[n] = c >>> 0;
+      }
+      return (CRC_T = t);
+    }
+    function crc32(u8) {
+      const t = crcTable();
+      let c = 0xffffffff;
+      for (let i = 0; i < u8.length; i++) c = t[(c ^ u8[i]) & 0xff] ^ (c >>> 8);
+      return (c ^ 0xffffffff) >>> 0;
+    }
+    function makeZip(name, text) {
+      const data = enc.encode(text), nameB = enc.encode(name);
+      const crc = crc32(data);
+      const L = 30 + nameB.length + data.length;
+      const C = 46 + nameB.length;
+      const out = new Uint8Array(L + C + 22);
+      const dv = new DataView(out.buffer);
+      const u16 = (o, v) => dv.setUint16(o, v, true);
+      const u32 = (o, v) => dv.setUint32(o, v, true);
+      const date = ((2026 - 1980) << 9) | (1 << 5) | 1; /* 2026-01-01 */
+      let o = 0;
+      u32(o, 0x04034b50); u16(o + 4, 20); u16(o + 6, 0); u16(o + 8, 0);
+      u16(o + 10, 0); u16(o + 12, date);
+      u32(o + 14, crc); u32(o + 18, data.length); u32(o + 22, data.length);
+      u16(o + 26, nameB.length); u16(o + 28, 0);
+      out.set(nameB, 30); out.set(data, 30 + nameB.length);
+      o = L;
+      u32(o, 0x02014b50); u16(o + 4, 20); u16(o + 6, 20); u16(o + 8, 0); u16(o + 10, 0);
+      u16(o + 12, 0); u16(o + 14, date);
+      u32(o + 16, crc); u32(o + 20, data.length); u32(o + 24, data.length);
+      u16(o + 28, nameB.length); u16(o + 30, 0); u16(o + 32, 0);
+      u16(o + 34, 0); u16(o + 36, 0); u32(o + 38, 0); u32(o + 42, 0);
+      out.set(nameB, o + 46);
+      o = L + C;
+      u32(o, 0x06054b50); u16(o + 4, 0); u16(o + 6, 0);
+      u16(o + 8, 1); u16(o + 10, 1); u32(o + 12, C); u32(o + 16, L); u16(o + 20, 0);
+      return out;
+    }
+    function download(payload, name, mime) {
+      const blob = new Blob([payload], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = name; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+
+    /* ---------- 名称 / 包名 ---------- */
+    let pkgTouched = false;
+    const derive = () => title.value.trim().replace(/\s+/g, "-");
+    function syncPkg() { if (!pkgTouched) pkg.value = derive(); }
+    title.addEventListener("input", () => { syncPkg(); saveSoon(); });
+    pkg.addEventListener("input", () => { pkgTouched = true; saveSoon(); });
+
+    /* ---------- 本地记忆 ---------- */
+    const KEY = "te-quiz-workshop";
+    let saveTimer = 0;
+    function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(() => {
+      try { localStorage.setItem(KEY, JSON.stringify({ t: title.value, p: pkgTouched ? pkg.value : "", b: body.value })); } catch (e) {}
+    }, 400); }
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (s) { body.value = s.b || ""; title.value = s.t || ""; if (s.p) { pkg.value = s.p; pkgTouched = true; } }
+    } catch (e) {}
+
+    /* ---------- 输入联动 ---------- */
+    let vTimer = 0;
+    function revalidate() { show(parse(normalizeBody(body.value))); }
+    body.addEventListener("input", () => { clearTimeout(vTimer); vTimer = setTimeout(revalidate, 250); saveSoon(); });
+    $("file").addEventListener("change", (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        const text = stripBom(String(r.result || ""));
+        const m = text.match(/^\*\s*title[ \t]+(.+)$/m);
+        if (m && !title.value.trim()) title.value = m[1].trim();
+        body.value = text;
+        syncPkg(); revalidate(); saveSoon();
+      };
+      r.readAsText(f, "utf-8");
+    });
+    $("sample").addEventListener("click", () => {
+      body.value =
+"Q 2026年全业务收入目标是多少万元？\n" +
+"A 173098\n" +
+"B 168888\n" +
+"C 175500\n" +
+"D 150000\n" +
+"R A\n" +
+"E 全业务173098万元、增幅1.56%；基础138288（+1%）；产数34810（+3.85%）。\n\n" +
+"Q 「五为」经营体系不包括？\n" +
+"A 客户为上\n" +
+"B 渠道为王\n" +
+"C 产品为根\n" +
+"D 品牌为纲\n" +
+"R B\n" +
+"E 五为＝客户为上、触点为先、产品为根、服务为本、品牌为纲，没有“渠道为王”。";
+      if (!title.value.trim()) title.value = "示例题库";
+      syncPkg(); revalidate(); saveSoon();
+    });
+    $("clear").addEventListener("click", () => {
+      body.value = ""; title.value = ""; pkg.value = ""; pkgTouched = false;
+      $("file").value = ""; revalidate(); saveSoon();
+    });
+
+    /* ---------- 生成 ---------- */
+    function buildContent() {
+      const t = title.value.trim();
+      if (!t) return { err: "请先填写题库名称（设备列表显示用）。" };
+      let p = pkg.value.trim() || derive();
+      if (!p) return { err: "包名不能为空。" };
+      if (/[\\/:*?"<>|\s]/.test(p)) return { err: "包名不能包含空格或 \\ / : * ? \" < > | 等字符。" };
+      if (/\.zip$/i.test(p)) p = p.slice(0, -4);
+      const full = "quiz-" + p;
+      if (bytes(full) > 47) return { err: "“" + full + "” 超过 47 字节（设备端文件名上限，中文每字 3 字节），请缩短包名。" };
+      const b = normalizeBody(body.value);
+      const v = parse(b);
+      if (v.errors.length) return { err: "题库有 " + v.errors.length + " 处错误，修完再生成。", v: v };
+      const content = "* title " + t + "\n\n" + (b ? b + "\n" : "");
+      if (bytes(content) > MAX_FILE) return { err: "题库超过 1 MB，超出设备读取上限。" };
+      return { content: content, pkg: p, count: v.count, v: v };
+    }
+
+    function printGen(msgs) {
+      genIssues.innerHTML = msgs.map((x) => '<li class="' + (x.w ? "w" : "e") + '">' + esc(x.msg) + "</li>").join("");
+    }
+
+    $("make").addEventListener("click", () => {
+      const r = buildContent();
+      if (r.err) { printGen([{ msg: r.err }]); summary.textContent = "生成失败。"; return; }
+      printGen(r.v.warns.length ? r.v.warns.map((w) => Object.assign({}, w, { w: 1 })) : []);
+      const zip = makeZip("quiz.txt", r.content);
+      const fname = "quiz-" + r.pkg + ".zip";
+      download(zip, fname, "application/zip");
+      summary.textContent = "已生成 " + fname + " · " + r.count + " 题 · " + (zip.length / 1024).toFixed(1) + " KB";
+      summary.style.fontWeight = "600";
+    });
+    $("dl-txt").addEventListener("click", () => {
+      const r = buildContent();
+      if (r.err) { printGen([{ msg: r.err }]); summary.textContent = "生成失败。"; return; }
+      printGen([]);
+      download(r.content, "quiz.txt", "text/plain;charset=utf-8");
+      summary.textContent = "已下载 quiz.txt · " + r.count + " 题";
+    });
+
+    /* 首次进入 */
+    revalidate();
+    if (!body.value && !title.value) { $("sample").click(); }
+    window.__qz = { makeZip: makeZip, normalizeBody: normalizeBody, parse: parse, buildContent: buildContent };
+  })();
+  </script>
+</body>
+</html>

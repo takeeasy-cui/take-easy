@@ -8,3 +8,6 @@ tools/
 Thumbs.db
 .DS_Store
 *.log
+
+# 本地临时目录（禁止入库）
+.temp/

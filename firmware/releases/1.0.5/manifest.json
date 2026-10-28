@@ -1,0 +1,52 @@
+{
+  "name": "take-easy",
+  "version": "1.0.5",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": false,
+      "parts": [
+        {
+          "path": "v1.0.5/bootloader.bin",
+          "offset": 0,
+          "size": 21232,
+          "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
+        },
+        {
+          "path": "v1.0.5/partitions.bin",
+          "offset": 32768,
+          "size": 3072,
+          "sha256": "399ca4ad739bb3ab8f6b86b6ceae1103660e0db3fb1d376761cf6967db6d6a54"
+        },
+        {
+          "path": "v1.0.5/firmware.bin",
+          "offset": 65536,
+          "size": 3832016,
+          "sha256": "a58eaa92cd2e8440926b70a7d7cba97bf7715db8d8a7cf91fd0d582ea8dda006"
+        },
+        {
+          "path": "v1.0.5/ime_partition_image.bin",
+          "offset": 5308416,
+          "size": 1044810,
+          "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
+        },
+        {
+          "path": "v1.0.5/ota_data_initial.bin",
+          "offset": 11599872,
+          "size": 8192,
+          "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+        }
+      ]
+    }
+  ],
+  "pico_ota": {
+    "layout": "pico-ime-compact-1m-v1",
+    "base_version": "1.0.5",
+    "minimum_base_version": "1.0",
+    "previous_version": "1.0.4",
+    "rollback": true
+  },
+  "updated_at": "2026-10-28T20:30:00+08:00",
+  "notes": "V1.0.5（体验修复与画皮完整可玩）：阅读目标恢复可调（首页阅读数据面板的每日目标 ± 按钮，15 分钟一档、15~180 分钟）；阅读翻页后的字体锯齿消除，恢复柔和灰边显示；时钟锁屏全新自定义：锁屏设置点时钟模式进选项页——横屏 / 竖屏版式、「只显示时间」、自定义签名（显示在时间正下方），竖屏排版重做（日期电量同行、老黄历宜忌左右并列、签名加大）；互动小说《画皮》完整可玩：进入直达第一章正文、对话名牌与正文完整、结局文案完整显示；互动小说字号跟随书阅读设置（书里调字号即同步）；对话游戏存档恢复正文完整；习测选项加大防误触；EPUB 兼容性提升（ZIP64 大文件不再误报）；字体目录支持 128 款；静置防褪色自动整屏养护；未联网时走时精度大幅提升（内部时钟不再每天偏慢约 2 分钟）。本版无分区变化：从 1.0.4 升级无需重新传书（不勾选「擦除设备」即可）。"
+}

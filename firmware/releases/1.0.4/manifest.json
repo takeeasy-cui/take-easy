@@ -1,0 +1,52 @@
+{
+  "name": "take-easy",
+  "version": "1.0.4",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": false,
+      "parts": [
+        {
+          "path": "v1.0.4/bootloader.bin",
+          "offset": 0,
+          "size": 21232,
+          "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
+        },
+        {
+          "path": "v1.0.4/partitions.bin",
+          "offset": 32768,
+          "size": 3072,
+          "sha256": "399ca4ad739bb3ab8f6b86b6ceae1103660e0db3fb1d376761cf6967db6d6a54"
+        },
+        {
+          "path": "v1.0.4/firmware.bin",
+          "offset": 65536,
+          "size": 3827920,
+          "sha256": "60f115529c3c2b33e8b4ce5de4ee99f18c3e4c7288f872c5898088882f874953"
+        },
+        {
+          "path": "v1.0.4/ime_partition_image.bin",
+          "offset": 5308416,
+          "size": 1044810,
+          "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
+        },
+        {
+          "path": "v1.0.4/ota_data_initial.bin",
+          "offset": 11599872,
+          "size": 8192,
+          "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+        }
+      ]
+    }
+  ],
+  "pico_ota": {
+    "layout": "pico-ime-compact-1m-v1",
+    "base_version": "1.0.4",
+    "minimum_base_version": "1.0",
+    "previous_version": "1.0.3",
+    "rollback": true
+  },
+  "updated_at": "2026-10-27T18:30:00+08:00",
+  "notes": "V1.0.4（习测与故事引擎）：新增「习测」题库练习应用（应用页第 9 入口）——题库包放 TF 卡 games 文件夹（quiz- 前缀 zip）即用，随机出题、选项乱序，单选 / 判断 / 多选三种题型，连对 3 次毕业、错题自动进错题集重练，答对答错都显示解析（长解析自动分页），支持跳过与进度清零，练习进度自动保存；配套官方网页「题库工坊」在线生成题库包，支持直接导入 Word 试题文档、Excel 表格等常见格式智能转换，全程本地运算不上传；新增「对话游戏」与「互动小说」两个应用（text- / novel- 前缀包）：对话游戏支持背景、立绘、分支剧情与多结局，互动小说按书页排版、章末抉择；对话游戏存档修复（恢复存档不再跳句）。数据保留：不要勾选「擦除设备」。"
+}

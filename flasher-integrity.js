@@ -51,18 +51,37 @@
         return {part, name, info, url: url.href};
       });
       const results = await Promise.allSettled(requests.map(async ({part, name, info, url}) => {
-        // 2026-10-30：给校验下载加 5 分钟超时——GitHub Pages 慢/被断时不再无限
-        // 卡在“正在校验刷机文件”，超时会直接报“下载失败”提示重试。
-        const response = await fetch(url, {cache: "no-store", signal: AbortSignal.timeout(300000)});
-        if (!response.ok) throw new Error(`安装文件下载失败（${response.status}），尚未写入设备。`);
-        const data = await response.arrayBuffer();
-        if (data.byteLength !== info.size || await digest(data) !== info.sha256)
-          throw new Error(`${name} 校验失败，可能收到了旧缓存；已停止安装，请刷新后重试。`);
-        if (expectVersion && name === "firmware.bin" && appVersion(new Uint8Array(data)) !== expectVersion)
-          throw new Error("固件内部版本与所选版本不一致，已停止安装。");
-        const blobURL = URL.createObjectURL(new Blob([data], {type: "application/octet-stream"}));
-        urls.push(blobURL);
-        part.path = blobURL;
+        // 2026-10-30 两道网络保护：
+        //  ① 每段下载 5 分钟超时——不再无限卡在“正在校验刷机文件”；
+        //  ② 瞬时网络故障自动重试 3 次（间隔递增 1.2s/2.4s）——国内到
+        //     Cloudflare/GitHub 偶发 "Failed to fetch"，文件本身完好，重试即恢复。
+        //    确定性错误（哈希不符/版本不一致/4xx）重试无意义，立即失败。
+        let lastError = null;
+        for (let attempt = 1; attempt <= 3; ++attempt) {
+          try {
+            const response = await fetch(url, {cache: "no-store", signal: AbortSignal.timeout(300000)});
+            if (!response.ok) {
+              const err = new Error(`安装文件下载失败（${response.status}），尚未写入设备。`);
+              err.noRetry = response.status >= 400 && response.status < 500;
+              throw err;
+            }
+            const data = await response.arrayBuffer();
+            if (data.byteLength !== info.size || await digest(data) !== info.sha256)
+              throw new Error(`${name} 校验失败，可能收到了旧缓存；已停止安装，请刷新后重试。`);
+            if (expectVersion && name === "firmware.bin" && appVersion(new Uint8Array(data)) !== expectVersion)
+              throw new Error("固件内部版本与所选版本不一致，已停止安装。");
+            const blobURL = URL.createObjectURL(new Blob([data], {type: "application/octet-stream"}));
+            urls.push(blobURL);
+            part.path = blobURL;
+            return;
+          } catch (error) {
+            lastError = error;
+            if (error && error.noRetry) throw error;
+            if (attempt < 3) await new Promise(resolve => setTimeout(resolve, 1200 * attempt));
+          }
+        }
+        throw (lastError && lastError.message) ? lastError
+          : new Error("安装文件下载失败，尚未写入设备，请重试。");
       }));
       const failure = results.find(result => result.status === "rejected");
       if (failure) throw failure.reason;

@@ -1,7 +1,15 @@
 {
   "schema": 1,
-  "latest": "2.0",
+  "latest": "2.0.1",
   "updates": [
+    {
+      "version": "2.0.1",
+      "date": "2026-10-30T17:37:42+08:00",
+      "notes": "V2.0.1（资源导入统一）：伏魔记与故事包导入方式完全统一——所有资源包（含 bbk-fmj.zip）zip 原样拷进 TF 卡 games 文件夹即可，零解压；列表显示名修复（zip 形态读 game.txt，「伏魔记」不再显示为 bbk-fmj 裸名）；目录直挂形态保持兼容（两种形态可共存）。2.0 设备的 TF 卡升级包 Pico-update.bin 同步更新。本版无分区变化，网页刷机不勾选「擦除设备」即可，书籍与设置保留。",
+      "dir": "releases/2.0.1",
+      "firmware_sha256": "f648c13738b872b9fdae2c2c6f145ee7814ee2c4c579fd277f9836715ca4cb02",
+      "firmware_size": 3867200
+    },
     {
       "version": "2.0",
       "date": "2026-10-30T16:39:03+08:00",

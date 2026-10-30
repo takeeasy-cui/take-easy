@@ -1,6 +1,6 @@
 {
   "name": "take-easy",
-  "version": "2.0",
+  "version": "2.0.1",
   "new_install_prompt_erase": true,
   "builds": [
     {
@@ -8,31 +8,31 @@
       "improv": false,
       "parts": [
         {
-          "path": "v2.0/bootloader.bin",
+          "path": "v2.0.1/bootloader.bin",
           "offset": 0,
           "size": 21232,
           "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
         },
         {
-          "path": "v2.0/partitions.bin",
+          "path": "v2.0.1/partitions.bin",
           "offset": 32768,
           "size": 3072,
           "sha256": "399ca4ad739bb3ab8f6b86b6ceae1103660e0db3fb1d376761cf6967db6d6a54"
         },
         {
-          "path": "v2.0/firmware.bin",
+          "path": "v2.0.1/firmware.bin",
           "offset": 65536,
-          "size": 3867264,
-          "sha256": "dc06cc7a34b319ba8ad581c78ebf8d9705f1d6cf50edeecc93566be7822a66bc"
+          "size": 3867200,
+          "sha256": "f648c13738b872b9fdae2c2c6f145ee7814ee2c4c579fd277f9836715ca4cb02"
         },
         {
-          "path": "v2.0/ime_partition_image.bin",
+          "path": "v2.0.1/ime_partition_image.bin",
           "offset": 5308416,
           "size": 1044810,
           "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
         },
         {
-          "path": "v2.0/ota_data_initial.bin",
+          "path": "v2.0.1/ota_data_initial.bin",
           "offset": 11599872,
           "size": 8192,
           "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
@@ -42,11 +42,11 @@
   ],
   "pico_ota": {
     "layout": "pico-ime-compact-1m-v1",
-    "base_version": "2.0",
+    "base_version": "2.0.1",
     "minimum_base_version": "1.0",
-    "previous_version": "1.0.5",
+    "previous_version": "2.0",
     "rollback": true
   },
-  "updated_at": "2026-10-30T16:39:03+08:00",
-  "notes": "V2.0 大版本（游戏引擎世代）：新增「步步高游戏」应用——《伏魔记》步步高电子词典经典 RPG 原生移植（原版 DAT.LIB 引擎逐字节实现，160×96 点阵 6 倍放大铺满屏，剧情/战斗/装备/物品/存档全套可玩，触屏圆形方向盘+菜单/确认/取消三键，对话与战斗时自动隐藏、点屏推进）；新增「文绎」应用——对话游戏与互动小说合并为统一入口（text-/novel- 双前缀同列表、游戏/小说徽标、进入自动路由渲染）；游戏内中键菜单（存档/读档/退出/刷新屏幕，退出自动存档并回文绎列表）；剧情引擎条件扩展（条件选项与灰显锁定+点击提示、条件插句、复合条件跳转、单幕选项扩到 8 个、跨周目通关计数与二周目内容）；新剧本三连发——《檐下谣》（单人乡土悬疑推理，6 结局 12 线索信任晋升，二周目专属台词）、《明末风云》大扩（吴三桂线补全、事件池 10、141 场景四类结局）、《重返十七岁》全素材墨水屏重制（22 昼夜背景+38 立绘）；触摸路径退出事件修复；伏魔记相机跟随/视口钳制/快刷三修；网页「剧作工坊」上线并开放资源下载区（檐下谣/明末风云/重返十七岁/画皮/伏魔记五款官方包一键导入）。TF 升级版本闸自本版起接受 1.0/2.0 双系列：2.0 设备可 TF 直升后续版或回退 1.0.x；1.0.x 老设备升级本版请用网页在线刷机（不勾选「擦除设备」，书籍与设置保留）。本版无分区变化。"
+  "updated_at": "2026-10-30T17:37:42+08:00",
+  "notes": "V2.0.1（资源导入统一）：伏魔记与故事包导入方式完全统一——所有资源包（含 bbk-fmj.zip）zip 原样拷进 TF 卡 games 文件夹即可，零解压；列表显示名修复（zip 形态读 game.txt，「伏魔记」不再显示为 bbk-fmj 裸名）；目录直挂形态保持兼容（两种形态可共存）。2.0 设备的 TF 卡升级包 Pico-update.bin 同步更新。本版无分区变化，网页刷机不勾选「擦除设备」即可，书籍与设置保留。"
 }

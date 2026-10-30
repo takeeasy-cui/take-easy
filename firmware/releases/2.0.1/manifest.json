@@ -1,0 +1,52 @@
+{
+  "name": "take-easy",
+  "version": "2.0.1",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": false,
+      "parts": [
+        {
+          "path": "v2.0.1/bootloader.bin",
+          "offset": 0,
+          "size": 21232,
+          "sha256": "523fee3d6dcdaa86b03cd40956928443c529b69058f81a92d5bdb9528bbc7a2e"
+        },
+        {
+          "path": "v2.0.1/partitions.bin",
+          "offset": 32768,
+          "size": 3072,
+          "sha256": "399ca4ad739bb3ab8f6b86b6ceae1103660e0db3fb1d376761cf6967db6d6a54"
+        },
+        {
+          "path": "v2.0.1/firmware.bin",
+          "offset": 65536,
+          "size": 3867200,
+          "sha256": "f648c13738b872b9fdae2c2c6f145ee7814ee2c4c579fd277f9836715ca4cb02"
+        },
+        {
+          "path": "v2.0.1/ime_partition_image.bin",
+          "offset": 5308416,
+          "size": 1044810,
+          "sha256": "27fec9eec6f74dac3083b4d9467ea74d6b1f66d4459927d086735fc2f93fd7cb"
+        },
+        {
+          "path": "v2.0.1/ota_data_initial.bin",
+          "offset": 11599872,
+          "size": 8192,
+          "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+        }
+      ]
+    }
+  ],
+  "pico_ota": {
+    "layout": "pico-ime-compact-1m-v1",
+    "base_version": "2.0.1",
+    "minimum_base_version": "1.0",
+    "previous_version": "2.0",
+    "rollback": true
+  },
+  "updated_at": "2026-10-30T17:37:42+08:00",
+  "notes": "V2.0.1（资源导入统一）：伏魔记与故事包导入方式完全统一——所有资源包（含 bbk-fmj.zip）zip 原样拷进 TF 卡 games 文件夹即可，零解压；列表显示名修复（zip 形态读 game.txt，「伏魔记」不再显示为 bbk-fmj 裸名）；目录直挂形态保持兼容（两种形态可共存）。2.0 设备的 TF 卡升级包 Pico-update.bin 同步更新。本版无分区变化，网页刷机不勾选「擦除设备」即可，书籍与设置保留。"
+}

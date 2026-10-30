@@ -51,7 +51,9 @@
         return {part, name, info, url: url.href};
       });
       const results = await Promise.allSettled(requests.map(async ({part, name, info, url}) => {
-        const response = await fetch(url, {cache: "no-store"});
+        // 2026-10-30：给校验下载加 5 分钟超时——GitHub Pages 慢/被断时不再无限
+        // 卡在“正在校验刷机文件”，超时会直接报“下载失败”提示重试。
+        const response = await fetch(url, {cache: "no-store", signal: AbortSignal.timeout(300000)});
         if (!response.ok) throw new Error(`安装文件下载失败（${response.status}），尚未写入设备。`);
         const data = await response.arrayBuffer();
         if (data.byteLength !== info.size || await digest(data) !== info.sha256)

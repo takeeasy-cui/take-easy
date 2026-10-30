@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" href="assets/icons/fox-32.png" />
   <link rel="stylesheet" href="assets/css/style.css?v=1.0.1" />
   <script src="./installer-bridge.js?v=1.0.1"></script>
-  <script src="./flasher-integrity.js?v=20261028" defer></script>
+  <script src="./flasher-integrity.js?v=20261030" defer></script>
   <script type="module" src="./vendor/web/install-button.js"></script>
 </head>
 <body>
@@ -57,63 +57,6 @@
     </div>
   </div>
 
-  <!-- 特性 -->
-  <section class="section" id="features">
-    <div class="container">
-      <div class="section-title">
-        <h2>为摸鱼设计</h2>
-        <p>总要给自己留一点时间，放轻松，摸个鱼。</p>
-      </div>
-      <div class="features">
-        <div class="feature">
-          <div class="icon">👆</div>
-          <h3>操作逻辑</h3>
-          <p>左右滑动切换页面与翻页，点击选择；长按中键退出应用，右键返回上一级；短按电源键锁屏。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🖋️</div>
-          <h3>舒适排版</h3>
-          <p>字体、字号、字重、行距、段距与页边距可调；也可换用竖屏 / 横屏 / 竖排 / 倒转四种版式。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">⌨️</div>
-          <h3>顺手输入法</h3>
-          <p>整体移植 YanReader 引擎：全拼与九宫格拼音、候选翻页、联想上屏、用户词典自学习。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">📊</div>
-          <h3>阅读留存</h3>
-          <p>阅读数据面板记录时长与进度，中断后的每次返回都更从容。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🗒️</div>
-          <h3>摸鱼小工具</h3>
-          <p>便签、番茄时钟、木鱼敲一敲，随时放松一下。内置小游戏测试中，将在后续版本上线。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🦊</div>
-          <h3>首页也很忙</h3>
-          <p>右侧小组件（天气 / 老黄历 / 木鱼 / 随心记）长按切换，下方继续阅读下滑换一本。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🌤️</div>
-          <h3>天气三源</h3>
-          <p>心知 / 和风 / 彩云任选，首页显示图标、地点与高低温，地点与密钥可随时配置。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">📡</div>
-          <h3>四路传书</h3>
-          <p>Wi-Fi 传书、设备热点、USB 读卡、微信读书，手机和电脑都能传，无需拔卡。</p>
-        </div>
-        <div class="feature">
-          <div class="icon">🔒</div>
-          <h3>锁屏定制</h3>
-          <p>票根 / 壁纸 / 时钟（黄历 · 待办）/ 计算器四种锁屏样式，锁屏密码随手就有。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- 在线刷机（ESP Web Tools，2026-10-21 参照 kiikoread 刷机模式重做） -->
   <section class="section" id="flash" style="background:var(--bg-soft);">
     <div class="container" style="max-width:880px;">
@@ -155,6 +98,49 @@
       <p style="font-size:12.5px;color:var(--text-3);margin-top:10px;">
         刷机完成后：把 EPUB / TXT 放进 TF 卡 Books/、字体放进 Fonts/（FAT 格式 TF 卡），开一本就能读。详细步骤与排查说明见 <a href="install/">刷机指南</a>。
       </p>
+    </div>
+  </section>
+
+  <!-- 新功能介绍（2026-10-30 改版：原「为摸鱼设计」区块下移至此，改版为 V2.0 新功能） -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-title">
+        <span class="badge badge-blue" style="display:inline-block;margin-bottom:12px;">V2.0 · 2026-10-30 发布</span>
+        <h2>新功能介绍</h2>
+        <p>墨水屏不止能读，还能玩——V2.0 游戏世代开局。</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="icon">🕹️</div>
+          <h3>步步高游戏</h3>
+          <p>词典经典《伏魔记》原生移植：原版点阵 6 倍放大铺满屏，剧情、战斗、装备、存档全套可玩；触屏方向盘 + 确认 / 取消 / 菜单三键，对话与战斗时自动隐藏。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">📖</div>
+          <h3>文绎 · 故事统一入口</h3>
+          <p>对话游戏与互动小说合为「文绎」：一个列表看全部故事包（带游戏 / 小说徽标），进入自动切换渲染；中键一键呼出 存档 / 读档 / 退出 / 刷新菜单。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🕵️</div>
+          <h3>单人剧本 · 现在就能玩</h3>
+          <p>《檐下谣》（乡土悬疑推理 · 12 线索 · 信任晋升 · 6 结局 · 二周目）、《明末风云 · 崇祯线》（141 场景 · 四类结局）、《重返十七岁》《画皮》墨水屏适配版。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">⚙️</div>
+          <h3>剧情引擎升级</h3>
+          <p>条件选项（未解锁灰显锁定、点击看解锁条件）、复合条件跳转、单幕 8 选项、跨周目通关记忆——首周纯净，二周目解锁专属台词与隐藏结局。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">🛠️</div>
+          <h3>剧作工坊 · 网页直转</h3>
+          <p>开源互动剧本在浏览器里一键转成设备故事包，全程本地运算不上传；配套资源下载区五款官方包，拷进 TF 卡 games 文件夹即玩。</p>
+        </div>
+        <div class="feature">
+          <div class="icon">⬆️</div>
+          <h3>升级更省心</h3>
+          <p>TF 卡升级包闸门支持 1.0 / 2.0 双系列，2.0 设备可直升后续版或回退 1.0.x；网页刷机不擦设备，书籍、字体与设置全部保留。</p>
+        </div>
+      </div>
     </div>
   </section>
 

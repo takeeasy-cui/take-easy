@@ -49,17 +49,20 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1
 
 自动执行：git push（备用站 1-2 分钟自动重建）+ wrangler deploy（主力站秒级更新）。
 
-## 当前待办（按优先级，2026-10-21 更新）
+## 当前待办（按优先级，2026-10-30 更新）
 
-1. **【已完成 staging · 待发布】V1.0 正式版定稿**（固件 0x39d6e0 = batch-22m，git tag v1.0，2026-10-21）：
-   - `firmware/v1.0/`：六段原件（bootloader/分区表/码表不变，应用为新构建 3,790,560B）+ full.bin（12,656,640B，esptool 5.5 merge-bin 合成）+ update.bin（=应用镜像拷贝，TF 卡升级时改名 Pico-update.bin；ota_update.c 三道闸兼容性同 b19 论证）
-   - `firmware/manifest.json`：唯一版本 1.0（2026-10-21），URL 指向 firmware/v1.0/，sha256 全量重算
-   - 下载页 / 更新日志页 / manifest 三处同步 v1.0；changelog 新增 V1.0 正式条目，b19 保留为历史条目
-   - V1.0 相对 b19 的变更：USB 读卡自愈、天气全面修复（自动/手动/失败原因/URL 编码/内置默认）、移除临时截图恢复锁屏、三游戏入口移除（源码保留在固件树，网页表述"测试中"）
-   - **待用户两件事后即可 `publish.ps1 "V1.0 正式版"` 双站发布**：①版权书封确认（首页×2 与书架共 6 处版权书封截图）②提供 GitHub PAT（凭证节同法注入）
-2. **【已完成】真机截图**：12 张已接入主页"真实界面"（images/，11 竖版 + 游戏横版）。22d 临时截图功能已在固件 22i 移除。**注意：apps.png 为 9 应用旧截图（含三游戏图标），与 V1.0 实机（6 应用）不一致——已按用户"游戏测试中"口径保留，待后续版本重截替换。**
-3. **【已完成】网站内容改造**（commit c136479）。
-4. **实测**：发布后用 RDP-G01-W 从 https://take-easy.pages.dev/install/ 网页刷机验证全链路。
+1. **【staging 完成 · 备用站发布 → 待实测 → 主力站】V2.0 大版本定稿**（固件 esp_app_desc 版本 2.0 = manifest 2.0，应用镜像 3,867,264B sha dc06cc7a…）：
+   - `firmware/v2.0/` + `firmware/releases/2.0/`：五段件（bootloader/分区表/ime/otadata 与 1.0.5 同 sha，应用新构建）+ Pico-update.bin；manifest 与 releases.json 最新版均置 2.0
+   - **资源下载区开放**（`workshop/#resources`，随剧作工坊首次上线）：text-yanxiayao (1.0MB) / text-mingmo (1.5MB) / text-17sui (5.1MB) / novel-huapi (6KB) / bbk-fmj (315KB) 五包，文件在 `firmware/resources/`
+   - 17sui 定稿口径：采用素材修复 v2 轮（zip 内烘焙时间 10:58-11:03，blank 昼景 224-240 平滑浅底/夜景纯黑=坏图重生成正稿；11:45 轮 blank 仍是全动态范围噪点，弃用）
+   - TF 升级闸门升级（`main/ota_update.c`）：2.0 起接受 "1.0"/"2.0" 双前缀（2.0 设备可回退 1.0.x 或直升 2.x）；**1.0.x 老设备升 2.0 必须走网页刷机**（旧固件闸门只认 1.0），changelog/工坊资源区均已注明
+   - 版本定义改动：`D:\readpico-rc95\CMakeLists.txt` else 分支 PROJECT_VER "2.0"（发布铁律：站点 manifest 升版必须同步）
+2. **实测清单（备用站 https://takeeasy-cui.github.io/take-easy/ 待 git push 生效后）**：
+   - `install/` 显示 V2.0 且五段完整性校验通过（本地已验：appVersion='2.0'、project='Read_Pico'、五段 sha 对 manifest）
+   - `workshop/#resources` 五个下载按钮全部可下载
+   - 真机：v2.0 刷入后应用页出现「文绎」「步步高游戏」；文绎中键菜单→退出自动存档回列表；《檐下谣》《伏魔记》可玩
+   - 全部过检后 **wrangler deploy 主力站**（publish.ps1 是双发命令，本流程改手动只跑 wrangler 步）
+3. **apps.png 截图更新**：为 9 应用旧截图，与 V2.0 实机应用页（含文绎/步步高游戏）不一致，待重截替换。
 
 ## 国内访问 GitHub 的经验（重要）
 

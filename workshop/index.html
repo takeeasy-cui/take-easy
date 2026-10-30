@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>剧作工坊 · 开源互动剧作/小说直转 · Take Easy 工坊</title>
+  <meta name="description" content="把 GitHub 开源的互动文字游戏/互动小说仓库（如《重返十七岁》）一键转成墨水屏设备可玩的故事包 zip；官方资源下载区提供檐下谣、明末风云、重返十七岁、画皮、伏魔记等成品包，拷进 TF 卡即玩。文字游戏与互动小说同源，改包名前缀即可切换渲染方式。" />
+  <link rel="icon" type="image/png" href="../assets/icons/fox-32.png" />
+  <link rel="stylesheet" href="../assets/css/style.css?v=1.0.1" />
+  <style>
+    /* 工坊页专用补充样式（沿用站点卡片/配色语言） */
+    .qz-textarea{width:100%;min-height:300px;padding:12px 14px;font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
+      border:1px solid rgba(0,0,0,.14);border-radius:10px;background:#fff;color:#1c1c1e;resize:vertical;box-sizing:border-box;}
+    .qz-textarea:focus{outline:none;border-color:rgba(10,132,255,.65);box-shadow:0 0 0 3px rgba(10,132,255,.14);}
+    .qz-input{width:100%;padding:10px 12px;font:14px/1.4 inherit;border:1px solid rgba(0,0,0,.14);border-radius:10px;
+      background:#fff;color:#1c1c1e;box-sizing:border-box;}
+    .qz-input:focus{outline:none;border-color:rgba(10,132,255,.65);box-shadow:0 0 0 3px rgba(10,132,255,.14);}
+    .qz-pkg{display:flex;align-items:center;gap:0;border:1px solid rgba(0,0,0,.14);border-radius:10px;background:#fff;overflow:hidden;}
+    .qz-pkg .aff{padding:10px 10px 10px 12px;font-size:13px;color:var(--text-3);white-space:nowrap;background:rgba(0,0,0,.03);}
+    .qz-pkg input{flex:1;border:0;padding:10px 12px 10px 0;font-size:14px;background:transparent;color:#1c1c1e;}
+    .qz-pkg input:focus{outline:none;}
+    .qz-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+    .qz-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;}
+    .qz-pill.ok{background:rgba(52,199,89,.12);color:#1d8a3d;}
+    .qz-pill.bad{background:rgba(255,45,85,.10);color:#d81b4f;}
+    .qz-pill.warn{background:rgba(255,149,0,.12);color:#b26a00;}
+    .qz-pill.mute{background:rgba(0,0,0,.05);color:var(--text-3);}
+    .qz-issues{list-style:none;margin:10px 0 0;padding:0;font-size:13px;line-height:1.7;max-height:250px;overflow:auto;}
+    .qz-issues li{padding:2px 0;border-bottom:1px dashed rgba(0,0,0,.06);}
+    .qz-issues .e{color:#d81b4f;}
+    .qz-issues .w{color:#b26a00;}
+    .qz-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;}
+    .qz-note{font-size:12.5px;color:var(--text-3);margin-top:8px;line-height:1.8;}
+    pre.qz-fmt{background:rgba(0,0,0,.04);border-radius:10px;padding:12px 14px;font:12.5px/1.7 ui-monospace,Consolas,monospace;overflow:auto;margin:8px 0 0;}
+    .dropzone{border:2px dashed rgba(0,0,0,.16);border-radius:12px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;background:rgba(0,0,0,.02);}
+    .dropzone:hover,.dropzone.drag{border-color:rgba(10,132,255,.55);background:rgba(10,132,255,.04);}
+    .dropzone .dz-icon{font-size:30px;margin-bottom:6px;}
+    .dz-files{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;}
+    .dz-file{font-size:12px;padding:3px 10px;border-radius:999px;background:rgba(10,132,255,.10);color:#0a66c2;}
+    .dz-file.bad{background:rgba(255,45,85,.10);color:#d81b4f;}
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="../"><img src="../assets/icons/fox-logo.png" alt="Take Easy 图标" style="height:24px;width:auto;" /><span>Take Easy</span></a>
+      <div class="nav-links">
+        <a href="../">首页</a>
+        <a href="../docs/">使用说明</a>
+        <a href="../changelog/">更新日志</a>
+        <a href="../quiz/">题库工坊</a>
+        <a class="btn btn-primary" href="../">返回主页</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" style="padding:84px 0 44px;">
+    <div class="container" style="max-width:860px;">
+      <span class="kicker">内容工坊 · 互动剧作 &amp; 互动小说 · 统一入口</span>
+      <h1 style="font-size:40px;">剧作工坊</h1>
+      <p class="sub">把网上的开源互动剧本，一键转成墨水屏设备可用的故事包。<br />文字游戏与互动小说同源——改包名前缀即可切换渲染方式。</p>
+      <p class="meta">全部在浏览器本地完成 · 剧本不会上传到任何服务器</p>
+    </div>
+  </header>
+
+  <section class="section" id="tool" style="padding-top:8px;">
+    <div class="container" style="max-width:860px;">
+
+      <!-- 第 1 步：上传剧本 -->
+      <div class="card">
+        <div class="field">
+          <label>第 1 步 · 上传开源仓库的剧本文件（.js，可多选）</label>
+          <div class="dropzone" id="dz">
+            <div class="dz-icon">📦</div>
+            <div>点击选择，或把 <b>game/story/</b> 目录里的 .js 文件拖进来</div>
+            <div class="dz-sub" style="margin-top:6px;">支持多选：把所有场景剧本一次选中（如 prologue.js / chapter1.js / …）</div>
+            <div class="dz-files" id="dz-files"></div>
+          </div>
+          <input type="file" id="file" accept=".js,.mjs,text/javascript,application/javascript" style="display:none;" multiple />
+          <p class="qz-note">来源示例：<b>Do-fei/tegame</b>（《重返十七岁》，MIT 开源）——GitHub 仓库页 Code → Download ZIP，解压后进 <code>game/story/</code> 目录，把里面的 .js 文件全部选中即可。解析器支持「export const 场景 = {…}」结构的 ES 模块剧本。</p>
+          <div id="import-info" class="qz-note" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- 第 2 步：名称 -->
+      <div class="card" style="margin-top:16px;">
+        <div class="field">
+          <label for="title">第 2 步 · 作品名称（设备列表里显示的名字）</label>
+          <input type="text" id="title" class="qz-input" maxlength="40" placeholder="例如：重返十七岁" />
+        </div>
+        <div class="field">
+          <label for="pkg">包名（文件名，可用中文；建议简短）</label>
+          <div class="qz-pkg" id="pkg-box">
+            <span class="aff">text-</span>
+            <input type="text" id="pkg" maxlength="42" placeholder="例如：17sui" />
+            <span class="aff" style="padding-right:12px;">.zip</span>
+          </div>
+          <p class="qz-note">留空则自动使用作品名称。前缀 <b>text-</b>＝对话流（立绘+对话框，适合带场景/立绘的剧作）；若想用书页排版阅读，可把前缀改成 <b>novel-</b>（同一套脚本，渲染方式不同）。</p>
+        </div>
+      </div>
+
+      <!-- 第 3 步：生成 -->
+      <div class="card" style="margin-top:16px;">
+        <div class="field">
+          <label>第 3 步 · 转换校验并生成</label>
+          <div id="summary" class="qz-note" style="margin-top:0;">先上传剧本文件，校验通过后即可生成。</div>
+          <div class="qz-pills" id="pills"></div>
+          <ul class="qz-issues" id="issues"></ul>
+          <div class="qz-row" style="margin-top:14px;">
+            <button type="button" id="make" class="btn btn-primary btn-lg">生成故事包（zip）</button>
+            <button type="button" id="dl-txt" class="btn btn-ghost">仅下载 story.txt</button>
+          </div>
+          <ul class="qz-issues" id="gen-issues"></ul>
+        </div>
+        <div class="field" style="margin-top:14px;">
+          <label for="out">转换后的 story.txt（可手工微调，改完会自动重新校验）</label>
+          <textarea id="out" class="qz-textarea" spellcheck="false" style="min-height:420px;"></textarea>
+        </div>
+      </div>
+
+      <!-- 使用说明 -->
+      <div class="notice info" style="margin-top:16px;">
+        <div>
+          <b>怎么装进设备？</b> 生成的 zip 直接拷进 TF 卡根目录的 <b>games</b> 文件夹（不用解压，与游戏包放一起），设备「应用 → 文字游戏」里就会出现。需要含「文字游戏」应用的固件版本。
+        </div>
+      </div>
+
+      <!-- 格式与 FAQ -->
+      <div class="card" style="margin-top:16px;padding:8px 24px;">
+        <details class="faq-item">
+          <summary>文字游戏 vs 互动小说：有什么区别？</summary>
+          <div class="ans">
+            <p>本质是<b>同一套脚本</b>（story.txt），同一个内核解释，只是「渲染出口」不同：</p>
+            <p>· <b>text- 前缀（文字游戏）</b>：对话流渲染——逐句进对话框，支持立绘、背景、选项 UI，适合《重返十七岁》这类 AVG 剧作；</p>
+            <p>· <b>novel- 前缀（互动小说）</b>：书页排版渲染——走书阅读链路，正文分页、字号/行距可调，适合对话少的文本型互动小说。</p>
+            <p>转换器不区分这两者，生成的都是 story.txt；<b>改包名前缀即可切换设备上的渲染方式</b>。当前转换器按对话剧作输出（text-）。</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>哪些开源仓库可以用？</summary>
+          <div class="ans">
+            <p>当前适配 <b>tegame 系</b>（Do-fei/tegame 及其衍生），即剧本为「<code>export const 场景 = { id, bg, palette, cast, next, script:[…] }</code>」结构的 ES 模块。script 条目含 <code>say/text</code>（对话与旁白）、<code>choice/options</code>（选项分支）、<code>goto</code>（跳转）、<code>id</code>（分支锚点）、<code>bg/cast</code>（场景与立绘）。转换器会把这些语义映射为 story 引擎的 <code>* label / * bg / * char / * choice / * goto / * ending</code> 命令。</p>
+            <p style="margin-top:8px;">其他仓库（Twine/ink/VNDS 等）正在逐步适配，敬请期待。</p>
+          </div>
+        </details>
+        <details class="faq-item">
+          <summary>转换后为什么只有文字，没有背景和立绘？</summary>
+          <div class="ans">当前版本聚焦「剧本语义」转换（story.txt），图片链路（背景/立绘素材转成设备灰度格式）正在开发中。缺图时设备会用占位框，不影响剧情试玩。后续版本将支持：背景图 / 立绘（<span class="aff" style="padding:0;">images/bg</span>、<span class="aff" style="padding:0;">images/char</span>）自动打包。</div>
+        </details>
+        <details class="faq-item">
+          <summary>数据存在哪里？</summary>
+          <div class="ans">上传的剧本和生成的 story.txt 只保存在当前浏览器的本地存储里（下次打开还在），所有转换计算都在你的电脑上完成，不经任何服务器。</div>
+        </details>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 资源下载：官方故事包/游戏包（v2.0 同步开放，2026-10-30） -->
+  <section class="section" id="resources" style="padding-top:28px;background:rgba(0,0,0,.015);">
+    <div class="container" style="max-width:860px;">
+      <span class="kicker">官方资源 · 拷进 TF 卡即玩</span>
+      <h2 style="font-size:26px;font-weight:800;margin:6px 0 4px;">资源下载</h2>
+      <p class="sub" style="font-size:14.5px;">官方出品的剧本与游戏包。把 zip 原样拷进 TF 卡根目录的 <b>games</b> 文件夹（不用解压），设备对应应用里就会出现。</p>
+
+      <div class="notice info" style="margin-top:14px;">
+        <div>
+          <b>怎么导入？</b> 设备「传输 → USB 读卡」连电脑，把 zip 拷进 <b>games</b> 文件夹；或拔 TF 卡用读卡器拷。<b>全部免解压</b>（伏魔记也可以解压成 <span class="mono">bbk-fmj</span> 文件夹放进 games）。故事包入口在「应用 → 文绎」，伏魔记在「应用 → 步步高游戏」。<b>从 1.0.x 升级的设备请先到在线刷机页刷入 v2.0</b>（不勾选「擦除设备」，书籍与设置保留）。
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 0;">
+          <div style="flex:1;min-width:260px;">
+            <div style="font-weight:800;font-size:15.5px;">檐下谣 <span class="badge badge-blue" style="margin-left:6px;">对话游戏 · 推理</span></div>
+            <p class="qz-note" style="margin-top:5px;">单人乡土悬疑推理：三户人家、12 条线索、信任晋升与锁定选项层层解锁，6 个结局 + 二周目专属台词；全套黑白线稿美术。</p>
+            <p class="qz-note" style="margin:4px 0 0;"><b>需 v2.0 固件</b>（条件选项引擎） · 约 1.0 MB · <span class="mono">text-yanxiayao.zip</span></p>
+          </div>
+          <a class="btn btn-primary" href="../firmware/resources/text-yanxiayao.zip" download>下载</a>
+        </div>
+        <div style="border-top:1px dashed rgba(0,0,0,.08);margin:12px 0;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 0;">
+          <div style="flex:1;min-width:260px;">
+            <div style="font-weight:800;font-size:15.5px;">明末风云 · 崇祯线 <span class="badge badge-blue" style="margin-left:6px;">对话游戏 · 历史</span></div>
+            <p class="qz-note" style="margin-top:5px;">大明最后六年：五阵营抉择、六项国势变量实时联动，151 场景、四类结局（中兴 / 南迁 / 亡国 / 内崩），事件池随机扰动。</p>
+            <p class="qz-note" style="margin:4px 0 0;"><b>建议 v2.0 固件</b>（1.0.4 起可玩） · 约 1.5 MB · <span class="mono">text-mingmo.zip</span></p>
+          </div>
+          <a class="btn btn-primary" href="../firmware/resources/text-mingmo.zip" download>下载</a>
+        </div>
+        <div style="border-top:1px dashed rgba(0,0,0,.08);margin:12px 0;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 0;">
+          <div style="flex:1;min-width:260px;">
+            <div style="font-weight:800;font-size:15.5px;">重返十七岁 <span class="badge badge-blue" style="margin-left:6px;">对话游戏 · 校园</span></div>
+            <p class="qz-note" style="margin-top:5px;">MIT 开源 AVG《重返十七岁》移植：22 张昼夜双背景 + 38 个立绘全部重制为墨水屏灰阶（含夜色变体），章节抉择多线。</p>
+            <p class="qz-note" style="margin:4px 0 0;"><b>建议 v2.0 固件</b>（1.0.4 起可玩） · 约 5.1 MB · <span class="mono">text-17sui.zip</span></p>
+          </div>
+          <a class="btn btn-primary" href="../firmware/resources/text-17sui.zip" download>下载</a>
+        </div>
+        <div style="border-top:1px dashed rgba(0,0,0,.08);margin:12px 0;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 0;">
+          <div style="flex:1;min-width:260px;">
+            <div style="font-weight:800;font-size:15.5px;">画皮 <span class="badge badge-green" style="margin-left:6px;">互动小说 · 聊斋</span></div>
+            <p class="qz-note" style="margin-top:5px;">聊斋经典改编互动小说：书页排版纯正文阅读，章末抉择走向，字号跟随书阅读设置。</p>
+            <p class="qz-note" style="margin:4px 0 0;">1.0.5 起可玩 · 约 6 KB · <span class="mono">novel-huapi.zip</span></p>
+          </div>
+          <a class="btn btn-primary" href="../firmware/resources/novel-huapi.zip" download>下载</a>
+        </div>
+        <div style="border-top:1px dashed rgba(0,0,0,.08);margin:12px 0;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:6px 0;">
+          <div style="flex:1;min-width:260px;">
+            <div style="font-weight:800;font-size:15.5px;">伏魔记 <span class="badge" style="margin-left:6px;background:rgba(88,86,214,.12);color:#4b49c9;">步步高移植 · RPG</span></div>
+            <p class="qz-note" style="margin-top:5px;">步步高电子词典经典 RPG 原生移植：原版剧情全量还原，160×96 点阵 6 倍放大，触屏方向盘 + 菜单/确认/取消三键，战斗装备存档全套可玩。</p>
+            <p class="qz-note" style="margin:4px 0 0;"><b>需 v2.0 固件</b>（「步步高游戏」应用） · 约 315 KB · <span class="mono">bbk-fmj.zip</span></p>
+          </div>
+          <a class="btn btn-primary" href="../firmware/resources/bbk-fmj.zip" download>下载</a>
+        </div>
+      </div>
+      <p class="qz-note" style="margin-top:12px;">资源包版本随固件更新；标注「需 v2.0」的包在旧固件上无法正常展开（条件选项缺失），请先升级。素材来源：檐下谣 / 明末风云 / 画皮为本站原创剧本；重返十七岁为 MIT 开源作品移植；伏魔记资源取自步步高原版点阵。</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="links">
+      <a href="../">返回主页</a>
+      <a href="../install/">在线刷机</a>
+      <a href="../docs/">使用说明</a>
+      <a href="../changelog/">更新日志</a>
+      <a href="https://github.com/takeeasy-cui/take-easy-firmware">固件源码</a>
+    </div>
+    <p>© 2026 Take Easy · 放轻松，你已经开始准备放松了</p>
+  </footer>
+
+  <script>
+  (() => {
+    "use strict";
+    const enc = new TextEncoder();
+    const $ = (id) => document.getElementById(id);
+    const titleEl = $("title"), pkgEl = $("pkg");
+    const pills = $("pills"), issues = $("issues"), summary = $("summary");
+    const genIssues = $("gen-issues"), outEl = $("out");
+    const MAX_LABELS = 512, MAX_LINE = 640, MAX_SCRIPT = 2 * 1024 * 1024;
+
+    /* ---------- 工具 ---------- */
+    const bytes = (s) => enc.encode(s).length;
+    const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    function stripBom(t) { return t.startsWith("\uFEFF") ? t.slice(1) : t; }
+
+    /* ---------- 剧本解析：export const X = {...} ---------- */
+    /* 把多个剧本文件的文本，解析为 { id: sceneObj } 的映射（id 取自对象内 id 字段）。 */
+    function extractScenes(texts) {
+      const scenes = {};          // id -> obj
+      const order = [];          // 场景 id 出现顺序
+      let start = null;          // START 常量（如 'office'）
+      for (const text of texts) {
+        /* export const NAME = { ... } 括号配平提取 */
+        const re = /export\s+const\s+([A-Za-z_$][\w$]*)\s*=\s*\{/g;
+        let m;
+        while ((m = re.exec(text))) {
+          const name = m[1];
+          let i = re.lastIndex - 1, depth = 0, inStr = false, strCh = "";
+          for (; i < text.length; i++) {
+            const c = text[i];
+            if (inStr) {
+              if (c === "\\") { i++; continue; }
+              if (c === strCh) inStr = false;
+              continue;
+            }
+            if (c === '"' || c === "'" || c === "`") { inStr = true; strCh = c; continue; }
+            if (c === "{") depth++;
+            else if (c === "}") { depth--; if (depth === 0) break; }
+          }
+          const body = text.slice(m.index + m[0].length - 1, i + 1);
+          let obj = null;
+          try { obj = JSON.parse(body); } catch (e) { /* 可能含注释/计算属性，跳过 */ }
+          if (!obj || typeof obj !== "object") continue;
+          if (obj.id && Array.isArray(obj.script)) {
+            if (!scenes[obj.id]) { scenes[obj.id] = obj; order.push(obj.id); }
+          }
+        }
+        /* index.js 风格的 START 常量：export const START = 'office' */
+        const sm = text.match(/export\s+const\s+START\s*=\s*['"]([A-Za-z0-9_]+)['"]/);
+        if (sm && !start) start = sm[1];
+      }
+      return { scenes, order, start };
+    }
+
+    /* ---------- tegame → story 转换（语义对齐 tegame2story.py） ---------- */
+    function convert({ scenes, order, start }) {
+      const lines = [];
+      const warn = [];
+      const titleVal = titleEl.value.trim() || "未命名作品";
+      lines.push("* title " + titleVal, "");
+
+      const START = start && scenes[start] ? start : (order[0] || "");
+      const seq = [];
+      const seen = new Set();
+      let cur = START;
+      while (cur && !seen.has(cur) && scenes[cur]) {
+        seen.add(cur); seq.push(cur); cur = scenes[cur].next;
+      }
+      for (const sid of order) if (!seen.has(sid)) { seen.add(sid); seq.push(sid); }
+
+      const subLabels = {};   // sceneId -> Set(sub id)
+      for (const sid of Object.keys(scenes)) {
+        const sc = scenes[sid];
+        const s = new Set();
+        (sc.script || []).forEach((e) => { if (e && e.id) s.add(e.id); });
+        subLabels[sid] = s;
+      }
+      const posOf = (x, w) => { const cx = x + w / 2; return cx < 107 ? "L" : (cx < 213 ? "C" : "R"); };
+      const escChoice = (s) => s.replace(/\|/g, "｜");
+
+      const labelDefs = new Set();
+      let autoN = 0;
+
+      for (const sid of seq) {
+        const sc = scenes[sid];
+        const script = (sc.script || []).map((e) => Object.assign({}, e));
+        lines.push("* label s_" + sid);
+        labelDefs.add("s_" + sid);
+
+        let st = { bg: sc.bg || "blank", pal: sc.palette || "day", cast: sc.cast || null };
+        let emBg = null, emCh = null;
+
+        const emitBg = () => {
+          const name = st.bg + "__" + st.pal;
+          if (emBg !== name) { lines.push("* bg " + name); emBg = name; }
+        };
+        const emitCast = () => {
+          const c = st.cast;
+          if (!c) {
+            if (emCh !== "none") { lines.push("* char 0 none C 0"); emCh = "none"; }
+            return;
+          }
+          const spr = c.sprite, suffix = (st.pal === "night" ? "__n" : "");
+          const key = spr + suffix + "|" + c.x + "|" + c.y;
+          if (emCh !== key) {
+            const w = 60; // 精灵宽近似，320 坐标系下 L/C/R 判定够用
+            lines.push("* char 0 " + spr + suffix + " " + posOf(c.x, w) + " 1");
+            emCh = key;
+          }
+        };
+        emitBg(); emitCast();
+
+        let i = 0, n = script.length;
+        while (i < n) {
+          const e = script[i];
+          const hasId = !!e.id;
+          if (hasId) { lines.push("* label s_" + sid + "__" + e.id); labelDefs.add("s_" + sid + "__" + e.id); }
+
+          if (e.choice !== undefined && e.options) {
+            const parts = [];
+            let pendAuto = null;
+            for (const o of e.options) {
+              const tgt = o.goto;
+              if (!tgt) {
+                autoN++; const t = "s_" + sid + "__auto" + autoN;
+                pendAuto = t;
+                parts.push(escChoice(o.label) + "->" + t);
+              } else if (subLabels[sid] && subLabels[sid].has(tgt)) {
+                parts.push(escChoice(o.label) + "->s_" + sid + "__" + tgt);
+              } else if (scenes[tgt]) {
+                parts.push(escChoice(o.label) + "->s_" + tgt);
+              } else {
+                warn.push(sid + ": 选项目标 '" + tgt + "' 未解析，按顺序继续");
+                parts.push(escChoice(o.label));
+              }
+            }
+            lines.push("* choice " + parts.join("|"));
+            if (pendAuto && i + 1 < n) script[i + 1]._auto = pendAuto;
+            i++; continue;
+          }
+
+          if (e._auto) { lines.push("* label " + e._auto); labelDefs.add(e._auto); }
+
+          if (e.bg !== undefined) st.bg = e.bg || "blank";
+          if (e.palette !== undefined) st.pal = e.palette || "day";
+          if (e.cast !== undefined) st.cast = e.cast || null;
+          emitBg(); emitCast();
+
+          const txt = e.text;
+          if (e.note) {
+            lines.push("* say 薄荷便签 「" + (e.note.line || "") + "」 —— 署名：" + (e.note.sig || "?"));
+          } else if (e.rewrite) {
+            lines.push("> ——（一张张翻到最后：每一张便签的落款，不知何时都换成了「高晓媛」三个字。）");
+          } else if (txt) {
+            const name = e.say || "";
+            if (name) lines.push("* say " + name + " " + txt);
+            else lines.push("> " + txt);
+          } else if (!hasId && !e._auto && e.say) {
+            lines.push("* name " + e.say);
+          }
+
+          if (e.end) {
+            if (e.gameover) {
+              lines.push("* ending 「GAME OVER」——他没能走出这个夏天。");
+            } else {
+              const nx = e.next || sc.next;
+              if (nx && scenes[nx]) lines.push("* goto s_" + nx);
+              else {
+                if (sid === "fin_reunion") lines.push("* ending 大团圆 · 十七岁这一年，重新开始了。");
+                else if (sid === "cafe") lines.push("* ending 彩蛋 · 这一刻，被夹进了你的「薄荷便签」。");
+                else lines.push("* ending 走出这里时，天光落在肩上，像什么都没发生过。");
+              }
+            }
+            i++; continue;
+          }
+          if (e.goto) {
+            const tgt = e.goto;
+            if (subLabels[sid] && subLabels[sid].has(tgt)) lines.push("* goto s_" + sid + "__" + tgt);
+            else if (scenes[tgt]) lines.push("* goto s_" + tgt);
+            else warn.push(sid + ": 行级 goto '" + tgt + "' 未解析，按顺序继续");
+          }
+          i++;
+        }
+      }
+
+      const story = lines.join("\n") + "\n";
+      return { story, warn, labels: labelDefs.size, textLines: lines.filter((l) => l.startsWith("> ") || l.startsWith("* say ")).length, scenes: seq.length };
+    }
+
+    /* ---------- 校验（story_check 语义） ---------- */
+    function validate(storyText) {
+      const errs = [], warns = [];
+      const lines = storyText.replace(/\r\n?/g, "\n").split("\n");
+      const labels = new Set();
+      lines.forEach((ln, i) => {
+        const m = ln.match(/^\*\s*label\s+(\S+)/);
+        if (m) {
+          if (labels.has(m[1])) errs.push((i + 1) + ": label 重复 \"" + m[1] + "\"");
+          labels.add(m[1]);
+        }
+      });
+      lines.forEach((ln, i) => {
+        if (bytes(ln) > MAX_LINE) errs.push((i + 1) + ": 行超长 " + bytes(ln) + "B");
+        const gm = ln.match(/^\*\s*goto\s+(\S+)/);
+        if (gm && !labels.has(gm[1])) errs.push((i + 1) + ": goto 目标不存在 \"" + gm[1] + "\"");
+        const ig = ln.match(/^\*\s*ifgoto\s+\S+\s+\S+\s+\S+\s+(\S+)/);
+        if (ig && !labels.has(ig[1])) errs.push((i + 1) + ": ifgoto 目标不存在 \"" + ig[1] + "\"");
+        const ing = ln.match(/^\*\s*ifngoto\s+\S+\s+\S+\s+\S+\s+(\S+)/);
+        if (ing && !labels.has(ing[1])) errs.push((i + 1) + ": ifngoto 目标不存在 \"" + ing[1] + "\"");
+        const iff = ln.match(/^\*\s*ifnot?\s+\S+\s+g\s+(\S+)/);
+        if (iff && !labels.has(iff[1])) errs.push((i + 1) + ": if 目标不存在 \"" + iff[1] + "\"");
+        const cm = ln.match(/^\*\s*choice\s+(.*)/);
+        if (cm) {
+          const parts = cm[1].split("|");
+          if (parts.length < 2 || parts.length > 6) errs.push((i + 1) + ": choice 项数 " + parts.length + "（须 2..6）");
+          parts.forEach((p) => {
+            if (p.indexOf("->") >= 0) {
+              const t = p.split("->", 2)[1].trim();
+              if (!labels.has(t)) errs.push((i + 1) + ": choice 目标不存在 \"" + t + "\"");
+            } else warns.push((i + 1) + ": 旧式标志选项（c0..c" + (parts.length - 1) + "）");
+          });
+        }
+      });
+      if (labels.size > MAX_LABELS) errs.push("label 总数 " + labels.size + " 超上限 " + MAX_LABELS);
+      if (bytes(storyText) > MAX_SCRIPT) errs.push("story 超过 2MB 上限");
+      return { errs, warns, labels: labels.size, lines: lines.length };
+    }
+
+    /* ---------- ZIP（STORE，设备 zip_reader 原生支持） ---------- */
+    let CRC_T = null;
+    function crcTable() {
+      if (CRC_T) return CRC_T;
+      const t = new Uint32Array(256);
+      for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+      return (CRC_T = t);
+    }
+    function crc32(u8) {
+      const t = crcTable(); let c = 0xffffffff;
+      for (let i = 0; i < u8.length; i++) c = t[(c ^ u8[i]) & 0xff] ^ (c >>> 8);
+      return (c ^ 0xffffffff) >>> 0;
+    }
+    function makeZip(name, text) {
+      const data = enc.encode(text), nameB = enc.encode(name);
+      const crc = crc32(data);
+      const L = 30 + nameB.length + data.length, C = 46 + nameB.length;
+      const out = new Uint8Array(L + C + 22);
+      const dv = new DataView(out.buffer);
+      const u16 = (o, v) => dv.setUint16(o, v, true), u32 = (o, v) => dv.setUint32(o, v, true);
+      const date = ((2026 - 1980) << 9) | (1 << 5) | 1;
+      let o = 0;
+      u32(o, 0x04034b50); u16(o + 4, 20); u16(o + 6, 0); u16(o + 8, 0);
+      u16(o + 10, 0); u16(o + 12, date);
+      u32(o + 14, crc); u32(o + 18, data.length); u32(o + 22, data.length);
+      u16(o + 26, nameB.length); u16(o + 28, 0);
+      out.set(nameB, 30); out.set(data, 30 + nameB.length);
+      o = L;
+      u32(o, 0x02014b50); u16(o + 4, 20); u16(o + 6, 20); u16(o + 8, 0); u16(o + 10, 0);
+      u16(o + 12, 0); u16(o + 14, date);
+      u32(o + 16, crc); u32(o + 20, data.length); u32(o + 24, data.length);
+      u16(o + 28, nameB.length); u16(o + 30, 0); u16(o + 32, 0);
+      u16(o + 34, 0); u16(o + 36, 0); u32(o + 38, 0); u32(o + 42, 0);
+      out.set(nameB, o + 46);
+      o = L + C;
+      u32(o, 0x06054b50); u16(o + 4, 0); u16(o + 6, 0);
+      u16(o + 8, 1); u16(o + 10, 1); u32(o + 12, C); u32(o + 16, L); u16(o + 20, 0);
+      return out;
+    }
+    function download(payload, name, mime) {
+      const blob = new Blob([payload], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = name; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+
+    /* ---------- 名称 / 包名 ---------- */
+    let pkgTouched = false;
+    const derive = () => titleEl.value.trim().replace(/\s+/g, "-");
+    function syncPkg() { if (!pkgTouched) pkgEl.value = derive(); }
+    titleEl.addEventListener("input", () => { syncPkg(); saveSoon(); });
+    pkgEl.addEventListener("input", () => { pkgTouched = true; saveSoon(); });
+
+    /* ---------- 本地记忆 ---------- */
+    const KEY = "te-story-workshop";
+    let saveTimer = 0;
+    function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(() => {
+      try { localStorage.setItem(KEY, JSON.stringify({ t: titleEl.value, p: pkgTouched ? pkgEl.value : "", o: outEl.value, files: lastNames })); } catch (e) {}
+    }, 400); }
+    let lastNames = [];
+    try {
+      const s = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (s) { titleEl.value = s.t || ""; if (s.p) { pkgEl.value = s.p; pkgTouched = true; } if (s.o) outEl.value = s.o; lastNames = s.files || []; }
+    } catch (e) {}
+
+    /* ---------- 上传 / 拖拽 ---------- */
+    const dz = $("dz"), fileInput = $("file");
+    const state = { texts: [], names: [], parsed: false, result: null };
+
+    function renderFiles() {
+      const box = $("dz-files");
+      box.innerHTML = state.names.map((n) => '<span class="dz-file' + (state.parsed ? " ok" : "") + '">' + esc(n) + "</span>").join("");
+    }
+    function loadFiles(files) {
+      const list = Array.from(files || []);
+      if (!list.length) return;
+      state.texts = []; state.names = [];
+      let pending = list.length;
+      list.forEach((f) => {
+        const r = new FileReader();
+        r.onload = () => {
+          state.texts.push(stripBom(String(r.result || ""))); state.names.push(f.name);
+          if (--pending === 0) { state.parsed = true; convertAll(); }
+        };
+        r.readAsText(f, "utf-8");
+      });
+    }
+    dz.addEventListener("click", () => fileInput.click());
+    dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+    dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+    dz.addEventListener("drop", (e) => { e.preventDefault(); dz.classList.remove("drag"); loadFiles(e.dataTransfer.files); });
+    fileInput.addEventListener("change", (e) => { loadFiles(e.target.files); e.target.value = ""; });
+
+    function convertAll() {
+      renderFiles();
+      const info = $("import-info");
+      const src = extractScenes(state.texts);
+      if (!Object.keys(src.scenes).length) {
+        state.parsed = false;
+        info.style.display = "";
+        info.innerHTML = '<b style="color:#d81b4f;">✗ 未识别到剧本场景（未找到「export const 场景 = {...}」结构）。请确认选中的是 game/story/ 下的 .js 文件。</b>';
+        renderFiles();
+        return;
+      }
+      info.style.display = "";
+      info.innerHTML = "✓ 解析到 <b>" + Object.keys(src.scenes).length + "</b> 个场景" +
+        (src.start ? "，起点：" + esc(src.start) : "") + "。转换中…";
+      const r = convert(src);
+      state.result = r;
+      outEl.value = r.story;
+      if (!titleEl.value.trim()) titleEl.value = "未命名作品";
+      syncPkg(); revalidate(); saveSoon();
+    }
+
+    /* ---------- 校验联动 ---------- */
+    function revalidate() {
+      const v = validate(outEl.value);
+      const ps = [];
+      if (v.errs.length) ps.push('<span class="qz-pill bad">' + v.errs.length + " 个错误</span>");
+      else if (outEl.value.trim()) ps.push('<span class="qz-pill ok">校验通过</span>');
+      if (v.warns.length) ps.push('<span class="qz-pill warn">' + v.warns.length + " 条提示</span>");
+      if (state.result) ps.push('<span class="qz-pill mute">' + state.result.scenes + " 场景</span>");
+      if (outEl.value.trim()) {
+        ps.push('<span class="qz-pill mute">' + v.labels + " label</span>");
+        ps.push('<span class="qz-pill mute">' + v.lines + " 行</span>");
+        ps.push('<span class="qz-pill mute">' + (bytes(outEl.value) / 1024).toFixed(1) + " KB</span>");
+      }
+      pills.innerHTML = ps.join("");
+      const items = [];
+      v.errs.slice(0, 40).forEach((e) => items.push('<li class="e">✗ ' + esc(e) + "</li>"));
+      v.warns.slice(0, 10).forEach((w) => items.push('<li class="w">! ' + esc(w) + "</li>"));
+      issues.innerHTML = items.join("");
+      summary.textContent = state.result
+        ? (v.errs.length ? "有错误，请在下方文本区修正后再生成。" : "转换完成，校验通过，可以生成包了。")
+        : "先上传剧本文件。";
+      const has = !!outEl.value.trim();
+      $("make").disabled = !has;
+      $("dl-txt").disabled = !has;
+    }
+    outEl.addEventListener("input", () => { saveSoon(); revalidate(); });
+
+    /* ---------- 生成 ---------- */
+    $("make").addEventListener("click", () => {
+      const v = validate(outEl.value);
+      if (v.errs.length) { genIssues.innerHTML = '<li class="e">✗ 有 ' + v.errs.length + " 个错误，请修正后再生成。</li>"; return; }
+      const pkgName = (pkgEl.value.trim() || derive() || "story").replace(/[\\/:*?"<>|]/g, "-");
+      const fname = "text-" + pkgName + ".zip";
+      const zip = makeZip("story.txt", outEl.value);
+      download(zip, fname, "application/zip");
+      genIssues.innerHTML = '<li style="color:#1d8a3d;">✔ 已生成 ' + esc(fname) + " · " + v.labels + " label · " + (zip.length / 1024).toFixed(1) + " KB</li>";
+      saveSoon();
+    });
+    $("dl-txt").addEventListener("click", () => {
+      download(enc.encode(outEl.value), "story.txt", "text/plain;charset=utf-8");
+    });
+
+    /* 页面载入时若有本地 story，重新校验一次 */
+    if (outEl.value.trim()) revalidate();
+  })();
+  </script>
+</body>
+</html>
